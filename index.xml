@@ -6,7 +6,51 @@
     <description>Recent content on yun&#39;s attic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Thu, 23 Apr 2020 17:12:14 +0200</lastBuildDate>
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About</title>
+      <link>https://yunli.nl/about/</link>
+      <pubDate>Thu, 23 Apr 2020 17:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/about/</guid>
+      <description>&lt;p&gt;Hi, I&amp;rsquo;m Yun, and welcome to my site.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m a data scientist, and I also like tinkering with things, taking photos, and drawing. Here&amp;rsquo;s one of the corners where I document what I do.&lt;/p&gt;
+&lt;h3 id=&#34;work--study&#34;&gt;work &amp;amp; study&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.optiver.com/eu/en/&#34;&gt;Optiver&lt;/a&gt; (2017-2020)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://amolf.nl/&#34;&gt;AMOLF&lt;/a&gt; (2016-2017)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.xtalpi.com/en/&#34;&gt;XtalPi&lt;/a&gt; (2015)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.auc.nl/&#34;&gt;Amsterdam University College&lt;/a&gt; (2014-2017)
+&lt;ul&gt;
+&lt;li&gt;BSc. liberal arts and sciences, focus on physics&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.hkbu.edu.hk/eng/main/index.jsp&#34;&gt;Hong Kong Baptist University&lt;/a&gt; (2012-2014)
+&lt;ul&gt;
+&lt;li&gt;unfinished BSc. applied and computational mathematics&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;social--contact&#34;&gt;social &amp;amp; contact&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/MotherOfUnicorns&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.linkedin.com/in/yun-li/&#34;&gt;LinkedIn&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.instagram.com/yunthemotherofunicorns/&#34;&gt;Instagram&lt;/a&gt;, another &lt;a href=&#34;https://www.instagram.com/uselessplasticwraps/&#34;&gt;Instagram&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://flickr.com/photos/40302242@N08/&#34;&gt;flickr&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;mailto:liyun.elf%5B_at_%5Dgmail.com&#34;&gt;email&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>My First Post</title>
+      <link>https://yunli.nl/blogs/my-first-post/</link>
+      <pubDate>Thu, 23 Apr 2020 17:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/my-first-post/</guid>
+      <description>&lt;p&gt;Building my site.&lt;/p&gt;
+</description>
+    </item>
     
   </channel>
 </rss>
