@@ -10,6 +10,116 @@
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Lateral Join with SQLAlchemy</title>
+      <link>https://yunli.nl/blogs/lateral_join_orm/</link>
+      <pubDate>Tue, 02 Jun 2020 11:54:19 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/lateral_join_orm/</guid>
+      <description>&lt;p&gt;When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.&lt;/p&gt;
+&lt;p&gt;One way to achieve this is to load all data with Python, and &lt;a href=&#34;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html&#34;&gt;resample&lt;/a&gt; or &lt;a href=&#34;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html&#34;&gt;reindex&lt;/a&gt; it with Pandas.&lt;/p&gt;
+&lt;p&gt;An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&amp;rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; generate_series(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2020-01-01&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2020-01-15&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2 hour&amp;#39;&lt;/span&gt;::interval) sampled_at
+&lt;span style=&#34;color:#66d9ef&#34;&gt;join&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;lateral&lt;/span&gt; (
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; alphavantage.fx f
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;where&lt;/span&gt; f.ts &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;=&lt;/span&gt; sampled_at
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;and&lt;/span&gt; currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;JPY&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;and&lt;/span&gt; currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;USD&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;order&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;by&lt;/span&gt; f.ts &lt;span style=&#34;color:#66d9ef&#34;&gt;desc&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;limit&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+) p &lt;span style=&#34;color:#66d9ef&#34;&gt;on&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And since I&amp;rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!&lt;/p&gt;
+&lt;p&gt;I found the SQLAlchemy documentation quite difficult to understand. I get the impression that to me there are many, many different ways to accomplish the same thing under this framework, and at some point I got quite overwhelmed and frustrtated after reading page after page of docs that doesn&amp;rsquo;t directly answer the question I have.&lt;/p&gt;
+&lt;p&gt;Then I came across this &lt;a href=&#34;https://adam-gligor.github.io/2019/11/15/sqlalchemy-subqueries/&#34;&gt;blog post&lt;/a&gt; by Adam Gligor, which really helped me comb my thoughts and finally decide on how I want to apporach it.&lt;/p&gt;
+&lt;p&gt;First take care of all the imports:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; dt
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; and_, desc, true
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.orm &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; aliased, sessionmaker
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.sql &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; func
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.sql.expression &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; join
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; .constants &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; DB_ENGINE
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; .models &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; FxPrice
+
+_Session &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sessionmaker(bind&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DB_ENGINE)
+session &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; _Session()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I wrote this subquery to generate this timeseries, and aliased it:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;start_ts, end_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;), dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+interval &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(hours&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+subquery_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+    session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(
+        func&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;generate_series(start_ts, end_ts, interval)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;label(
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sampled_at&amp;#34;&lt;/span&gt;
+        )
+    )
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;subquery()
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;lateral()
+)
+a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; aliased(subquery_ts)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;aliased()&lt;/code&gt; function does something like this in SQL:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; some_table &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; some_alias
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It essentially allows you to give some (intermediate or temporary) table a name, so that you can reference it later again, either when joining it with another table, or joining with itself.&lt;/p&gt;
+&lt;p&gt;Then I wrote another subquery to get the most recent price update at each time point I want to sample.
+Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; table with &lt;code&gt;a.c.sampled_at&lt;/code&gt;, where &lt;code&gt;a&lt;/code&gt; is the aforementioned alias to the table created using &lt;code&gt;generate_series&lt;/code&gt;.
+(The &lt;code&gt;.c&lt;/code&gt; in &lt;code&gt;a.c&lt;/code&gt; is for &lt;code&gt;columns&lt;/code&gt;, so &lt;code&gt;a.c.sampled_at&lt;/code&gt; gets you the column named &lt;code&gt;sampled_at&lt;/code&gt;.)&lt;/p&gt;
+&lt;p&gt;Without the aliasing I wouldn&amp;rsquo;t be able to achieve this effect; instead it would create a nested subquery and that&amp;rsquo;s not what I want.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;subquery_price &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+    session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(FxPrice)
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(
+        and_(
+            FxPrice&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ts &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;=&lt;/span&gt; a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sampled_at,
+            FxPrice&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;currency_from &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;JPY&amp;#34;&lt;/span&gt;,
+            FxPrice&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;currency_to &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;USD&amp;#34;&lt;/span&gt;,
+        )
+    )
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;order_by(desc(FxPrice&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ts))
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;limit(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;subquery()
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;lateral()
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, putting everything together:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;results &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+    session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(
+        subquery_price&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ts,
+        a,
+        subquery_price&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;currency_from,
+        subquery_price&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;currency_to,
+        subquery_price&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;price,
+    )
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;select_from(a)
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;join(subquery_price, true())
+    &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;all()
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Which actually produces the following query:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
+&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; (
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; generate_series(:generate_series_1, :generate_series_2, :generate_series_3) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; sampled_at
+    ) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; anon_2
+&lt;span style=&#34;color:#66d9ef&#34;&gt;JOIN&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;LATERAL&lt;/span&gt; (
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; alphavantage.fx.created_at &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; created_at, alphavantage.fx.ts &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; ts, alphavantage.fx.currency_from &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; currency_from, alphavantage.fx.currency_to &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; currency_to, alphavantage.fx.price &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; price
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; alphavantage.fx
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;WHERE&lt;/span&gt; alphavantage.fx.ts &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;=&lt;/span&gt; anon_2.sampled_at
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;AND&lt;/span&gt; alphavantage.fx.currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; :currency_from_1
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;AND&lt;/span&gt; alphavantage.fx.currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; :currency_to_1
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;ORDER&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;BY&lt;/span&gt; alphavantage.fx.ts &lt;span style=&#34;color:#66d9ef&#34;&gt;DESC&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;LIMIT&lt;/span&gt; :param_1
+    ) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; anon_1
+&lt;span style=&#34;color:#66d9ef&#34;&gt;ON&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;where the parameters are:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt; {
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_1&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;),
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_2&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;),
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_3&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;7200&lt;/span&gt;),
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;currency_from_1&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;JPY&amp;#39;&lt;/span&gt;,
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;currency_to_1&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;USD&amp;#39;&lt;/span&gt;,
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;param_1&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+ }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
       <title>Schema Names: SQLAlchemy and Alembic</title>
       <link>https://yunli.nl/blogs/schema_name/</link>
       <pubDate>Thu, 28 May 2020 11:54:19 +0200</pubDate>
