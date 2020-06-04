@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Schema Names: SQLAlchemy and Alembic – yun&#39;s attic</title>
+<meta name="description" content="I recently started working on my own autotrader. There&amp;rsquo;s still much to be done, but I&amp;rsquo;ve finished the first step &amp;ndash; collecting data and put them in a …">
+<meta name="created" content="2020-05-28T11:54:19+0200">
+<meta name="modified" content="2020-05-28T11:54:19+0200">
+
+<meta name="contact" content="liyun@gmail.com">
+<meta property="og:site_name" content="yun&#39;s attic">
+<meta property="og:title" content="Schema Names: SQLAlchemy and Alembic">
+<meta property="og:url" content="https://yunli.nl/blogs/schema_name/">
+<meta property="og:type" content="article">
+
+<meta name="generator" content="Hugo 0.69.0" />
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+
+
+<link rel="canonical" href="https://yunli.nl/blogs/schema_name/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
+<link rel="stylesheet" href="/css/styles.07de9722ae74190da91740ecb1e12bbfa31de324e29ab4972bdcc4131519528c.css">
+<link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "headline": "Schema Names: SQLAlchemy and Alembic",
+    "datePublished": "2020-05-28T11:54:19+02:00",
+    "dateModified": "2020-05-28T11:54:19+02:00",
+    "url" : "https://yunli.nl/blogs/schema_name/",
+    "description": "I recently started working on my own autotrader. There\u0026rsquo;s still much to be done, but I\u0026rsquo;ve finished the first step \u0026ndash; collecting data and put them in a …",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://yunli.nl/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "yun's attic",
+      "url": "https://yunli.nl/"
+    }
+  }
+</script>
+
+<script defer src="/js/lib/jquery.slim.min.a5ab2a00a0439854f8787a0dda775dea5377ef4905886505c938941d6854ee4f.js"></script>
+<script defer src="/js/lib/umbrella.min.b426107371d121c9a56a27aac9e9058ff592a021e2f4c3c94827fe70920d3cbb.js"></script>
+<script defer src="/js/mobile.min.3a3510028bab9810834389725137cfa50f5d3231799ef9ac70769331fa59859a.js"></script>
+<script defer src="/js/script.min.8e4d91ebe0d9226621e408b7205bd7b009e4935608e4b29c4275116490cc836d.js"></script>
+
+
+</head>
+
+<body class="single-page">
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header">
+<a href="/" title="Home" rel="home" class="header__logo"><img src="/images/logo.png" alt="Home" class="header__logo-image"></a>
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
+</h1>
+<div class="region header__region">
+</div>
+</header>
+
+<nav class="main-menu layout__navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a href="/">Home</a></li>
+<li><a href="/about/">About</a></li>
+<li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main">
+<article class="section-blogs single-view">
+<header>
+<h1 class="title title-submitted">Schema Names: SQLAlchemy and Alembic</h1>
+<div class="submitted">
+<time class="created-date" datetime="2020-05-28T11:54:19&#43;02:00">28 May, 2020</time>
+</div>
+</header>
+<div class="content">
+<p>I recently started working on my own autotrader. There&rsquo;s still much to be done, but I&rsquo;ve finished the first step &ndash; collecting data and put them in a database. I&rsquo;ve got a PostgreSQL server running on Docker, and a script that reads data using the <a href="https://www.alphavantage.co/documentation/">AlphaVantage API</a> and writes to my database.</p>
+<p>The next step would be to write my own Python API to query data from the database. The easy way for me would be to stick a bunch of SQL queries in some python functions, but why do that when you can make life more complicated! I&rsquo;ve been wanting to learn about <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a>, and decided this would be my chance to try it out with SQLAlchemy.</p>
+<h2 id="foreign-keys">foreign keys</h2>
+<p>I first created these models:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> Column, ForeignKey
+<span style="color:#f92672">from</span> sqlalchemy.dialects.postgresql <span style="color:#f92672">import</span> DOUBLE_PRECISION, TEXT, TIMESTAMP
+<span style="color:#f92672">from</span> sqlalchemy.ext.declarative <span style="color:#f92672">import</span> declarative_base
+<span style="color:#f92672">from</span> sqlalchemy.orm <span style="color:#f92672">import</span> relationship
+
+Base <span style="color:#f92672">=</span> declarative_base()
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ModelMixin</span>:
+    __table_args__ <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;schema&#34;</span>: <span style="color:#e6db74">&#34;alphavantage&#34;</span>}
+    created_at <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span>True))
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Currency</span>(Base, ModelMixin):
+    __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;currencies&#34;</span>
+    currency <span style="color:#f92672">=</span> Column(TEXT, primary_key<span style="color:#f92672">=</span>True)
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FxPrice</span>(Base, ModelMixin):
+    __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fx&#34;</span>
+    ts <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span>True), primary_key<span style="color:#f92672">=</span>True)
+    currency_from <span style="color:#f92672">=</span> Column(
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+    )
+    currency_to <span style="color:#f92672">=</span> Column(
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+    )
+    price <span style="color:#f92672">=</span> Column(DOUBLE_PRECISION)
+
+    _currency_from <span style="color:#f92672">=</span> relationship(<span style="color:#e6db74">&#34;Currency&#34;</span>, foreign_keys<span style="color:#f92672">=</span>[currency_from])
+    _currency_to <span style="color:#f92672">=</span> relationship(<span style="color:#e6db74">&#34;Currency&#34;</span>, foreign_keys<span style="color:#f92672">=</span>[currency_to])
+</code></pre></div><p>With an existing database, my goal is to reproduce the tables with a SQLAlchemy model, so I can interact with the database throught this bit of Python code.</p>
+<p>But it didn&rsquo;t work, and kept producing this error:</p>
+<pre><code>sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column 'fx.currency_from' could not find table 'currencies' with which to generate a foreign key to target column 'currency'
+</code></pre><p>After much digging, I found the problem is because the tables are not in the default <code>public</code> schema, and the  solution is to specify schema name while declaring the columns with foreign keys:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    currency_from <span style="color:#f92672">=</span> Column(
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+    )
+    currency_to <span style="color:#f92672">=</span> Column(
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+    )
+</code></pre></div><h2 id="alembic">alembic</h2>
+<p><a href="https://alembic.sqlalchemy.org/en/latest/">Alembic</a> is a tool for helping with database migrations. It helps tie together your SQLAlchemy models with tables in your database, so that any change you make in your ORM model (e.g. add a column, introduce a new table, etc) will be automatically reflected in your databse.</p>
+<p>It was quite easy to set up, but when I tried to run</p>
+<pre><code>alembic revision --autogenerate
+alembic upgrade head --sql
+</code></pre><p>to try it out, it ended up trying to create two new tables in my database <code>public.&quot;alphavantage.currencies&quot;</code> and <code>public.&quot;alphavantage.fx&quot;</code>. The expected behabiour is to do nothing, because those two tables already exists in my database.</p>
+<p>Apparenly, by default, alembic only discovers tables in the default schema. In this case the tables are in a different <code>alphavantage</code> schema, and that caused some confusion.</p>
+<p>To change its default behaviour, locate the <code>env.py</code> file in <code>./alembic</code>, and add this line</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">include_schemas<span style="color:#f92672">=</span>True
+</code></pre></div><p>in the bit about</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">context<span style="color:#f92672">.</span>configure()
+</code></pre></div><p>of both of these two functions</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_offline</span>():
+    <span style="color:#f92672">...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_online</span>()
+    <span style="color:#f92672">...</span>
+</code></pre></div><h2 id="conclusion">conclusion</h2>
+<p>Maybe check your schema names when SQLAlchemy can&rsquo;t seem find a table that actually exists!</p>
+
+
+</div>
+</article>
+</main>
+
+
+<aside class="sidebar layout__second-sidebar">
+<section>
+<h4 class="menu"><a href="/blogs/" class="active" aria-current="page">Blogs</a></h4>
+<ul class="menu">
+<li><a href="/blogs/schema_name/" class="active" aria-current="page">Schema Names: SQLAlchemy and Alembic</a></li>
+<li><a href="/blogs/my-first-post/">My First Post</a></li>
+</ul>
+</section>
+</aside>
+<footer class="footer layout__footer">
+<p>This site is licensed under a <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> License.</p>
+
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+</footer>
+
+</div>
+<div class="mobile-nav" dir="ltr">
+  <div class="mobile-nav__cover"></div>
+  <a href="#navigation" class="mobile-nav__toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav__sheet">
+    <div class="mobile-nav__region">
+    
+    </div>
+    <nav class="mobile-nav__main-menu">
+    <h2 class="visually-hidden">Main menu</h2>
+    <ul class="mobile-nav__navbar">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
+    </ul>
+    </nav>
+  </div>
+</div>
+</body>
+</html>

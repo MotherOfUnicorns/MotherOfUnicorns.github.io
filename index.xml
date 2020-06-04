@@ -10,6 +10,75 @@
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Schema Names: SQLAlchemy and Alembic</title>
+      <link>https://yunli.nl/blogs/schema_name/</link>
+      <pubDate>Thu, 28 May 2020 11:54:19 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/schema_name/</guid>
+      <description>&lt;p&gt;I recently started working on my own autotrader. There&amp;rsquo;s still much to be done, but I&amp;rsquo;ve finished the first step &amp;ndash; collecting data and put them in a database. I&amp;rsquo;ve got a PostgreSQL server running on Docker, and a script that reads data using the &lt;a href=&#34;https://www.alphavantage.co/documentation/&#34;&gt;AlphaVantage API&lt;/a&gt; and writes to my database.&lt;/p&gt;
+&lt;p&gt;The next step would be to write my own Python API to query data from the database. The easy way for me would be to stick a bunch of SQL queries in some python functions, but why do that when you can make life more complicated! I&amp;rsquo;ve been wanting to learn about &lt;a href=&#34;https://en.wikipedia.org/wiki/Object-relational_mapping&#34;&gt;ORM&lt;/a&gt;, and decided this would be my chance to try it out with SQLAlchemy.&lt;/p&gt;
+&lt;h2 id=&#34;foreign-keys&#34;&gt;foreign keys&lt;/h2&gt;
+&lt;p&gt;I first created these models:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Column, ForeignKey
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.dialects.postgresql &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; DOUBLE_PRECISION, TEXT, TIMESTAMP
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.ext.declarative &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; declarative_base
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.orm &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; relationship
+
+Base &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; declarative_base()
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ModelMixin&lt;/span&gt;:
+    __table_args__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage&amp;#34;&lt;/span&gt;}
+    created_at &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True))
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Currency&lt;/span&gt;(Base, ModelMixin):
+    __tablename__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies&amp;#34;&lt;/span&gt;
+    currency &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TEXT, primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;FxPrice&lt;/span&gt;(Base, ModelMixin):
+    __tablename__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fx&amp;#34;&lt;/span&gt;
+    ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+    currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+    )
+    currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+    )
+    price &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(DOUBLE_PRECISION)
+
+    _currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; relationship(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Currency&amp;#34;&lt;/span&gt;, foreign_keys&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[currency_from])
+    _currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; relationship(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Currency&amp;#34;&lt;/span&gt;, foreign_keys&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[currency_to])
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With an existing database, my goal is to reproduce the tables with a SQLAlchemy model, so I can interact with the database throught this bit of Python code.&lt;/p&gt;
+&lt;p&gt;But it didn&amp;rsquo;t work, and kept producing this error:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column &#39;fx.currency_from&#39; could not find table &#39;currencies&#39; with which to generate a foreign key to target column &#39;currency&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After much digging, I found the problem is because the tables are not in the default &lt;code&gt;public&lt;/code&gt; schema, and the  solution is to specify schema name while declaring the columns with foreign keys:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;    currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+    )
+    currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+    )
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;alembic&#34;&gt;alembic&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://alembic.sqlalchemy.org/en/latest/&#34;&gt;Alembic&lt;/a&gt; is a tool for helping with database migrations. It helps tie together your SQLAlchemy models with tables in your database, so that any change you make in your ORM model (e.g. add a column, introduce a new table, etc) will be automatically reflected in your databse.&lt;/p&gt;
+&lt;p&gt;It was quite easy to set up, but when I tried to run&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;alembic revision --autogenerate
+alembic upgrade head --sql
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;to try it out, it ended up trying to create two new tables in my database &lt;code&gt;public.&amp;quot;alphavantage.currencies&amp;quot;&lt;/code&gt; and &lt;code&gt;public.&amp;quot;alphavantage.fx&amp;quot;&lt;/code&gt;. The expected behabiour is to do nothing, because those two tables already exists in my database.&lt;/p&gt;
+&lt;p&gt;Apparenly, by default, alembic only discovers tables in the default schema. In this case the tables are in a different &lt;code&gt;alphavantage&lt;/code&gt; schema, and that caused some confusion.&lt;/p&gt;
+&lt;p&gt;To change its default behaviour, locate the &lt;code&gt;env.py&lt;/code&gt; file in &lt;code&gt;./alembic&lt;/code&gt;, and add this line&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;include_schemas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;in the bit about&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;context&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;configure()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;of both of these two functions&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run_migrations_offline&lt;/span&gt;():
+    &lt;span style=&#34;color:#f92672&#34;&gt;...&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run_migrations_online&lt;/span&gt;()
+    &lt;span style=&#34;color:#f92672&#34;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
+&lt;p&gt;Maybe check your schema names when SQLAlchemy can&amp;rsquo;t seem find a table that actually exists!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>https://yunli.nl/about/</link>
       <pubDate>Thu, 23 Apr 2020 17:12:14 +0200</pubDate>
