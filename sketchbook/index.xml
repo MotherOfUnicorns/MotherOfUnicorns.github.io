@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sketchbooks on yun&#39;s attic</title>
+    <link>https://yunli.nl/sketchbook/</link>
+    <description>Recent content in Sketchbooks on yun&#39;s attic</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 02 Jun 2020 22:15:14 +0200</lastBuildDate>
+    <atom:link href="https://yunli.nl/sketchbook/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Random Portrait</title>
+      <link>https://yunli.nl/sketchbook/2020-06-02-portrait/</link>
+      <pubDate>Tue, 02 Jun 2020 22:15:14 +0200</pubDate>
+      <guid>https://yunli.nl/sketchbook/2020-06-02-portrait/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://yunli.nl/sketchbook/2020-06-02-portrait.jpeg&#34; alt=&#34;portrait&#34; title=&#34;portrait&#34;&gt;&lt;/p&gt;
+&lt;p&gt;portrait sketch using an old magazine as reference, graphite pencil&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Bay Leaf</title>
+      <link>https://yunli.nl/sketchbook/2020-05-30-bay_leaf/</link>
+      <pubDate>Sat, 30 May 2020 22:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/sketchbook/2020-05-30-bay_leaf/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://yunli.nl/sketchbook/2020-05-30-bay_leaf.jpeg&#34; alt=&#34;bay leaf&#34; title=&#34;bay leaf&#34;&gt;&lt;/p&gt;
+&lt;p&gt;bay leaf from biryani, watercolour&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Sunflower</title>
+      <link>https://yunli.nl/sketchbook/2020-05-24-sunflower/</link>
+      <pubDate>Sun, 24 May 2020 20:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/sketchbook/2020-05-24-sunflower/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://yunli.nl/sketchbook/2020-05-24-sunflower.jpeg&#34; alt=&#34;sunflower&#34; title=&#34;sunflower&#34;&gt;&lt;/p&gt;
+&lt;p&gt;sunflower, watercolour&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Parakeet</title>
+      <link>https://yunli.nl/sketchbook/2020-05-10-parakeet/</link>
+      <pubDate>Sun, 10 May 2020 21:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/sketchbook/2020-05-10-parakeet/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;https://yunli.nl/sketchbook/2020-05-10-parakeet.jpg&#34; alt=&#34;parakeet&#34; title=&#34;parakeet&#34;&gt;&lt;/p&gt;
+&lt;p&gt;parakeet, watercolour&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
