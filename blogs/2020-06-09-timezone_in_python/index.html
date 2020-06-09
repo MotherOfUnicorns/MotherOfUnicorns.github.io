@@ -103,7 +103,7 @@ dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020<
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">datetime<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">0</span>, tzinfo<span style="color:#f92672">=&lt;</span>DstTzInfo <span style="color:#e6db74">&#39;Europe/Amsterdam&#39;</span> LMT<span style="color:#f92672">+</span><span style="color:#ae81ff">0</span>:<span style="color:#ae81ff">20</span>:<span style="color:#ae81ff">00</span> STD<span style="color:#f92672">&gt;</span>)
 </code></pre></div></li>
 <li>
-<p>use <code>timezone.localize() on an existing </code>datetime.datetime``` object</p>
+<p>use <code>timezone.localize()</code> on an existing <code>datetime.datetime</code> object</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">tz <span style="color:#f92672">=</span> timezone(<span style="color:#e6db74">&#39;Europe/Amsterdam&#39;</span>)
 tz<span style="color:#f92672">.</span>localize(dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">10</span>))
 </code></pre></div><p>which gives this:</p>
