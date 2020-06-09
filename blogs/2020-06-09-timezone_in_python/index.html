@@ -113,6 +113,7 @@ tz<span style="color:#f92672">.</span>localize(dt<span style="color:#f92672">.</
 <p>Why are they not the same???</p>
 <p>Answer is, method #1 returns a time offset which is the <a href="https://en.wikipedia.org/wiki/Local_mean_time">Local Mean Time (LMT)</a>, which is purely decided by the longitude of the location in question. On the other hand, method #2 gives the actual <a href="https://en.wikipedia.org/wiki/Time_zone">time zone</a>, which is more of a social structure than a geological one, and that is what I wanted.</p>
 <p>Here <code>CET</code> stands for Central European Time, which is the time zone observed in the Netherlands.</p>
+<p>I didn&rsquo;t feel like using any third-party packages like <a href="https://arrow.readthedocs.io/en/latest/">Arrow</a> or <a href="https://pendulum.eustace.io/">Pendulum</a>. They each have their own nice features, but integrating them with other libraries (like SQLAlchemy I&rsquo;m using) sometimes is a bit messy (and more work to do).</p>
 <p>Maybe at some point I&rsquo;ll end up writing a series about how I approach time zones. Part of me still hopes that we&rsquo;ll all switch to UTC some time soon. Or at least, get rid of daylight saving.</p>
 
 
