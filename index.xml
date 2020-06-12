@@ -14,7 +14,7 @@
       <link>https://yunli.nl/blogs/2020-06-09-timezone_in_python/</link>
       <pubDate>Tue, 09 Jun 2020 14:02:50 +0200</pubDate>
       <guid>https://yunli.nl/blogs/2020-06-09-timezone_in_python/</guid>
-      <description>&lt;p&gt;Time zone is such a messy subject, and I don&amp;rsquo;t event know what to start with.&lt;/p&gt;
+      <description>&lt;p&gt;Time zone is such a messy subject, and I don&amp;rsquo;t even know what to start with.&lt;/p&gt;
 &lt;p&gt;At my previous job I had this photo saved from a &lt;a href=&#34;https://stackoverflow.com/questions/13703720/converting-between-datetime-timestamp-and-datetime64&#34;&gt;stackoverflow answer&lt;/a&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://i.stack.imgur.com/uiXQd.png&#34; alt=&#34;time zone conversion&#34;&gt;&lt;/p&gt;
 &lt;p&gt;so that every time I need to do some time zone conversion magic, I have a quick reference to go to. Because seriously, how do you expect anyone to memorize all that?&lt;/p&gt;
