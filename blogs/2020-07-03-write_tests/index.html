@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
-<title>My First Post – yun&#39;s attic</title>
-<meta name="description" content="Building my site.">
-<meta name="created" content="2020-04-23T17:12:14+0200">
-<meta name="modified" content="2020-04-23T17:12:14+0200">
+<title>Write Tests for Your Data Science Project – yun&#39;s attic</title>
+<meta name="description" content="I never seem to have got into the habit of writing tests as I code. That&amp;rsquo;s bad, I know. But there are so many excuses that prevents it, &amp;ldquo;oh this is just an …">
+<meta name="created" content="2020-07-03T13:09:00+0200">
+<meta name="modified" content="2020-07-03T13:09:00+0200">
 
 <meta name="contact" content="liyun@gmail.com">
 <meta property="og:site_name" content="yun&#39;s attic">
-<meta property="og:title" content="My First Post">
-<meta property="og:url" content="https://yunli.nl/blogs/2020-04-23-first_post/">
+<meta property="og:title" content="Write Tests for Your Data Science Project">
+<meta property="og:url" content="https://yunli.nl/blogs/2020-07-03-write_tests/">
 <meta property="og:type" content="article">
 
 <meta name="generator" content="Hugo 0.69.0" />
@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<link rel="canonical" href="https://yunli.nl/blogs/2020-04-23-first_post/">
+<link rel="canonical" href="https://yunli.nl/blogs/2020-07-03-write_tests/">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 <link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
@@ -30,11 +30,11 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "headline": "My First Post",
-    "datePublished": "2020-04-23T17:12:14+02:00",
-    "dateModified": "2020-04-23T17:12:14+02:00",
-    "url" : "https://yunli.nl/blogs/2020-04-23-first_post/",
-    "description": "Building my site.",
+    "headline": "Write Tests for Your Data Science Project",
+    "datePublished": "2020-07-03T13:09:00+02:00",
+    "dateModified": "2020-07-03T13:09:00+02:00",
+    "url" : "https://yunli.nl/blogs/2020-07-03-write_tests/",
+    "description": "I never seem to have got into the habit of writing tests as I code. That\u0026rsquo;s bad, I know. But there are so many excuses that prevents it, \u0026ldquo;oh this is just an …",
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://yunli.nl/"
@@ -80,13 +80,21 @@
 <main class="main layout__main">
 <article class="section-blogs single-view">
 <header>
-<h1 class="title title-submitted">My First Post</h1>
+<h1 class="title title-submitted">Write Tests for Your Data Science Project</h1>
 <div class="submitted">
-<time class="created-date" datetime="2020-04-23T17:12:14&#43;02:00">23 April, 2020</time>
+<time class="created-date" datetime="2020-07-03T13:09:00&#43;02:00">3 July, 2020</time>
 </div>
 </header>
 <div class="content">
-<p>Building my site.</p>
+<p>I never seem to have got into the habit of writing tests as I code. That&rsquo;s bad, I know.</p>
+<p>But there are so many excuses that prevents it, &ldquo;oh this is just an exploratory thing&rdquo;, or &ldquo;Karen and Chad really needs the report/tool soon, no time for test&rdquo;, or whatever else that might get in your way. Plus there&rsquo;s a tendency to just use the million open-source projects out-of-the box, and expect them to do what you think they do.</p>
+<p>Sometimes they don&rsquo;t work they way you had hoped, and you end up digging thought lines and lines of code hoping to find out what went wrong where. And if you&rsquo;re working with particularly large datasets, just the IO along can slow you down very considerably. Or worse yet, you merrily hand over a &ldquo;finished product&rdquo; without even realising the bugs inside &ndash; because no tests told you so! I can personally attest to this, especially those deadline-rushed projects.</p>
+<p>Well, this time I did it again. I&rsquo;m about a thousand line deep into my autotrader project, when I realised my features are being scaled in inconsistent ways, that I though of &ldquo;hmm, maybe there should be a test for this&hellip;&rdquo;</p>
+<p>It&rsquo;s a very simple operation, take all the values of one feature in the training dataset, subtract the mean, and divide by the standard deviation.
+The default behaviour of <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html"><code>sklearn.preprocessing.StandardScaler</code></a> takes the population standard deviation, meaning it&rsquo;s normalised by <code>N</code>, the sample size, whereas the default behaviour of <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.std.html"><code>pandas.DataFrame.std</code></a> calculates standard deviation with <code>N-1</code>, which is what I expected.</p>
+<p>I went back and created a toy dataset, and wrote my own test for my functions and modules which scale different types of features. And many more tests for other functions and modules. I spent a whole week catching up with writing tests. During the process I also refactored some of my maybe-a-bit-too-long functions, so that they&rsquo;re easier to test, and also easier to read.</p>
+<p>Granted, bugs are ever-elusive, and no amount of testing can ensure you don&rsquo;t ever make mistakes. But I would sleep better at night. (It&rsquo;s also a great feeling to watch your tests pass one by one, and the green dots appear one after another. So satisfying.)</p>
+<p>Just write some tests, it&rsquo;s better late than never.</p>
 
 
 </div>
@@ -98,11 +106,11 @@
 <section>
 <h4 class="menu"><a href="/blogs/" class="active" aria-current="page">Blogs</a></h4>
 <ul class="menu">
-<li><a href="/blogs/2020-07-03-write_tests/">Write Tests for Your Data Science Project</a></li>
+<li><a href="/blogs/2020-07-03-write_tests/" class="active" aria-current="page">Write Tests for Your Data Science Project</a></li>
 <li><a href="/blogs/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
 <li><a href="/blogs/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
 <li><a href="/blogs/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
-<li><a href="/blogs/2020-04-23-first_post/" class="active" aria-current="page">My First Post</a></li>
+<li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
 </ul>
 </section>
 <section>

@@ -6,8 +6,25 @@
     <description>Recent content in Blogs on yun&#39;s attic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Jun 2020 14:02:50 +0200</lastBuildDate>
+    <lastBuildDate>Fri, 03 Jul 2020 13:09:00 +0200</lastBuildDate>
     <atom:link href="https://yunli.nl/blogs/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Write Tests for Your Data Science Project</title>
+      <link>https://yunli.nl/blogs/2020-07-03-write_tests/</link>
+      <pubDate>Fri, 03 Jul 2020 13:09:00 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/2020-07-03-write_tests/</guid>
+      <description>&lt;p&gt;I never seem to have got into the habit of writing tests as I code. That&amp;rsquo;s bad, I know.&lt;/p&gt;
+&lt;p&gt;But there are so many excuses that prevents it, &amp;ldquo;oh this is just an exploratory thing&amp;rdquo;, or &amp;ldquo;Karen and Chad really needs the report/tool soon, no time for test&amp;rdquo;, or whatever else that might get in your way. Plus there&amp;rsquo;s a tendency to just use the million open-source projects out-of-the box, and expect them to do what you think they do.&lt;/p&gt;
+&lt;p&gt;Sometimes they don&amp;rsquo;t work they way you had hoped, and you end up digging thought lines and lines of code hoping to find out what went wrong where. And if you&amp;rsquo;re working with particularly large datasets, just the IO along can slow you down very considerably. Or worse yet, you merrily hand over a &amp;ldquo;finished product&amp;rdquo; without even realising the bugs inside &amp;ndash; because no tests told you so! I can personally attest to this, especially those deadline-rushed projects.&lt;/p&gt;
+&lt;p&gt;Well, this time I did it again. I&amp;rsquo;m about a thousand line deep into my autotrader project, when I realised my features are being scaled in inconsistent ways, that I though of &amp;ldquo;hmm, maybe there should be a test for this&amp;hellip;&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s a very simple operation, take all the values of one feature in the training dataset, subtract the mean, and divide by the standard deviation.
+The default behaviour of &lt;a href=&#34;https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html&#34;&gt;&lt;code&gt;sklearn.preprocessing.StandardScaler&lt;/code&gt;&lt;/a&gt; takes the population standard deviation, meaning it&amp;rsquo;s normalised by &lt;code&gt;N&lt;/code&gt;, the sample size, whereas the default behaviour of &lt;a href=&#34;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.std.html&#34;&gt;&lt;code&gt;pandas.DataFrame.std&lt;/code&gt;&lt;/a&gt; calculates standard deviation with &lt;code&gt;N-1&lt;/code&gt;, which is what I expected.&lt;/p&gt;
+&lt;p&gt;I went back and created a toy dataset, and wrote my own test for my functions and modules which scale different types of features. And many more tests for other functions and modules. I spent a whole week catching up with writing tests. During the process I also refactored some of my maybe-a-bit-too-long functions, so that they&amp;rsquo;re easier to test, and also easier to read.&lt;/p&gt;
+&lt;p&gt;Granted, bugs are ever-elusive, and no amount of testing can ensure you don&amp;rsquo;t ever make mistakes. But I would sleep better at night. (It&amp;rsquo;s also a great feeling to watch your tests pass one by one, and the green dots appear one after another. So satisfying.)&lt;/p&gt;
+&lt;p&gt;Just write some tests, it&amp;rsquo;s better late than never.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Time Zone in Python - Tip of the Iceberg</title>
