@@ -6,8 +6,45 @@
     <description>Recent content on yun&#39;s attic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Apr 2020 17:12:14 +0200</lastBuildDate>
+    <lastBuildDate>Mon, 17 Aug 2020 21:19:46 +0200</lastBuildDate>
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Waking Up with rtcwake and crontab</title>
+      <link>https://yunli.nl/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/</link>
+      <pubDate>Mon, 17 Aug 2020 21:19:46 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/</guid>
+      <description>&lt;p&gt;I have a couple of scripts that I&amp;rsquo;d like to run at night, but I also want to leave my machine suspended to RAM overnight to conserve energy (and reduce noise, the fan is a beast!). So this is just a note for myself about how I went about it this time, using &lt;code&gt;rtcwake&lt;/code&gt; and &lt;code&gt;crontab&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s the crontab I originally had, which is triggered once a day in the afternoon:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;59 15 * * *  /some/bash/script.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But now I want to run it at night, when I&amp;rsquo;m not around my computer, which like me is probably also asleep. So I need to make sure the machine is in an awake state just before the cron jobs are scheduled to be executed.&lt;/p&gt;
+&lt;p&gt;Some minutes of DuckDuckGo later I found &lt;a href=&#34;https://www.man7.org/linux/man-pages/man8/rtcwake.8.html&#34;&gt;&lt;code&gt;rtcwake&lt;/code&gt;&lt;/a&gt;, which uses the hardware clock on the motherboard to send a signal to wake up the machine at desired time. Sounds like exactly what I need.&lt;/p&gt;
+&lt;p&gt;So now my crontab becomes:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
+59 3 * * * /some/bash/script.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Some explanations:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;rtcwake&lt;/code&gt; needs root permission, hence the &lt;code&gt;sudo&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;-m no&lt;/code&gt; flag only sets an alert to wake up the machine. If the machine is already awake, nothing will change.&lt;/li&gt;
+&lt;li&gt;The main idea is to start a cycle: &lt;code&gt;rtcwake&lt;/code&gt; wakes up the machine (03:55) a few minutes before the scheduled cron job (03:59), and then another cron job (04:01) uses &lt;code&gt;rtcwake&lt;/code&gt; to set up the next alert for tomorrow.&lt;/li&gt;
+&lt;li&gt;After everything is done, the machine will go to sleep after 30 minutes according to some other energy saving settings I have.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I waited for one night, but it did not work as I expected (it&amp;rsquo;s the first-time-never-works-law).&lt;/p&gt;
+&lt;p&gt;Because &lt;code&gt;rtcwake&lt;/code&gt; requires root permission, it needs the root password when that cron job is run. But given it&amp;rsquo;s a bad idea to store root passwords anywhere it&amp;rsquo;s better to use root&amp;rsquo;s crontab instead of the one owned by the user. In other words, it would be two separate crontabs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;with &lt;code&gt;sudo crontab -e&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;with your regular &lt;code&gt;crontab -e&lt;/code&gt; (of course, this can also be run under root&amp;rsquo;s crontab, but I don&amp;rsquo;t want to clutter that up):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;59 3 * * * /some/bash/script.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Et voilà, it&amp;rsquo;s as sweet as a dream, pun intended.&lt;/p&gt;
+&lt;p&gt;The only issue is if your machine restarts during the day and failed to run the crontab containing &lt;code&gt;rtcwake&lt;/code&gt;, you&amp;rsquo;ll have to do it manually once to get the cycle started.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Write Tests for Your Data Science Project</title>
