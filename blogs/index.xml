@@ -6,8 +6,50 @@
     <description>Recent content in Blogs on yun&#39;s attic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 17 Aug 2020 21:19:46 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 26 Sep 2020 22:20:55 +0200</lastBuildDate>
     <atom:link href="https://yunli.nl/blogs/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Rough Estimate: When to go back to school?</title>
+      <link>https://yunli.nl/blogs/2020-09-26-rough_estimate_when_to_go_to_school/</link>
+      <pubDate>Sat, 26 Sep 2020 22:20:55 +0200</pubDate>
+      <guid>https://yunli.nl/blogs/2020-09-26-rough_estimate_when_to_go_to_school/</guid>
+      <description>&lt;p&gt;I was very excited to go back to school to once again bask in the glory of education and inch closer to becoming a virtuous woman.
+But the gods have not been kind, and more importantly, the humans have not been able enough to trust and be trusted and keep the virus at bay through concerted efforts.
+So even though I really miss the chance to meet people and talk to them once a week, I&amp;rsquo;ve decided to stay at home and avoid university campuses for a while.
+Especially since &lt;a href=&#34;https://www.rivm.nl/documenten/wekelijkse-update-epidemiologische-situatie-covid-19-in-nederland&#34;&gt;my age group has the highest infection rate right now&lt;/a&gt;.
+You never know.&lt;/p&gt;
+&lt;p&gt;That said, I also want to know: in the (near?) future, when can I go back to school?&lt;/p&gt;
+&lt;p&gt;There must be a number &amp;ndash; a magical indicator &amp;ndash; that will signal my return.&lt;/p&gt;
+&lt;p&gt;I thought I would start with the infection rate, or perhaps the rate of positively tested cases daily as an estimate of how many people around me are infected.
+But not everyone getting tested will be roaming the street, so it&amp;rsquo;s not likely that I will encounter them.
+Also a person who&amp;rsquo;s feeling completely fine is probably less interested in getting their brain swabbed.&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s too many twists and turns to reason about. I needed something rough.
+So here&amp;rsquo;s another thought: every day there are more people tested positive. Over a short period (say 3 days) this number does not (yet) fluctuate very wildly.
+So why not use the number of daily new cases as a substitute for people carrying the virus that are roaming the streets 3 days ago?
+And to take it further, why no use the number of daily new cases as a substitute for people carrying the virus that are roaming the streets now?&lt;/p&gt;
+&lt;p&gt;Many problems with this assumption exist, true. But it&amp;rsquo;s the most readily available number.&lt;/p&gt;
+&lt;p&gt;Next, the classic i.i.d. assumption: that everyone in the country are equally likely to carry the virus, and one person&amp;rsquo;s chance of being infected has no influence on others (say their family members or friends with whom they meet often).&lt;/p&gt;
+&lt;p&gt;Another bad assumption! But why not, this is a rough estimate.&lt;/p&gt;
+&lt;p&gt;The rest of the things fall into place very quickly.&lt;/p&gt;
+&lt;p&gt;If &lt;code&gt;s&lt;/code&gt; is the number of daily new cases, &lt;code&gt;P&lt;/code&gt; the total population of the country/province/whatever, &lt;code&gt;N&lt;/code&gt; the number of people I meet/share a room with every time I venter out of my home into the university campus, then the probability of no one I meet is carrying the virus is&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(1 - s/P)^N
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;So the probability of at least one person is carrying the virus is&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1 - (1 - s/P)^N
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;If I accept at most &lt;code&gt;a = 0.1%&lt;/code&gt; risk of meeting someone who carries the virus, then I can formulate it as&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1 - (1 - s/P)^N &amp;lt;= a
+    (1 - s/P)^N &amp;gt;= 1 - a
+        1 - s/P &amp;gt;= (1 - a)^(1/N)
+            s/P &amp;lt;= 1 - (1 - a)^(1/N)
+              s &amp;lt;= P(1 - (1 - a)^(1/N))
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Since I&amp;rsquo;m meeting about 20 people every time, for the &lt;a href=&#34;https://en.wikipedia.org/wiki/Demography_of_the_Netherlands&#34;&gt;population in the Netherlands&lt;/a&gt; and my appetite for risk, that works out to &lt;code&gt;s = 850&lt;/code&gt;.
+Compared to the &lt;a href=&#34;https://www.rivm.nl/en/novel-coronavirus-covid-19/current-information&#34;&gt;almost 3000 cases&lt;/a&gt; a day now, I can stay at home for a bit longer.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s pretty conservative, but I remember getting pneumonia as a kid, not a good feeling.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m sure there are much better epidemiology models that can give you a smarter estimate.
+But I am now a committed woman (to homework and group projects) so a rough estimate will have to suffice.&lt;/p&gt;
+&lt;p&gt;I do hope that day comes soon.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Waking Up with rtcwake and crontab</title>
