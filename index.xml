@@ -10,6 +10,16 @@
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Recipes</title>
+      <link>https://yunli.nl/recipes/</link>
+      <pubDate>Fri, 04 Dec 2020 14:12:14 +0200</pubDate>
+      <guid>https://yunli.nl/recipes/</guid>
+      <description>&lt;p&gt;You can find some of my recipes &lt;a href=&#34;http://yunli.nl/recipes/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Bon appétit!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Autumn 2020 II</title>
       <link>https://yunli.nl/sketchbook/2020-10-25_autumn2/</link>
       <pubDate>Sun, 25 Oct 2020 22:01:56 +0200</pubDate>
