@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en-us" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Lessons Learned from RC2020 – yun&#39;s attic</title>
+<meta name="description" content="I took part in the recently-finished ML Reproducibility Challenge 2020, and together with a great team we attempted to reproduce one of the papers as part of a course …">
+<meta name="created" content="2021-02-02T20:56:27+0100">
+<meta name="modified" content="2021-02-02T20:56:27+0100">
+
+<meta name="contact" content="liyun@gmail.com">
+<meta property="og:site_name" content="yun&#39;s attic">
+<meta property="og:title" content="Lessons Learned from RC2020">
+<meta property="og:url" content="https://yunli.nl/blogs/2021-02-02lessons_learned_rc2020/">
+<meta property="og:type" content="article">
+
+<meta name="generator" content="Hugo 0.80.0" />
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+
+
+<link rel="canonical" href="https://yunli.nl/blogs/2021-02-02lessons_learned_rc2020/">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
+<link rel="stylesheet" href="/css/styles.159e5347492c734a666a2678db9a478c339b9ad376372e062cd19572540448a1.css">
+<link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "headline": "Lessons Learned from RC2020",
+    "datePublished": "2021-02-02T20:56:27+01:00",
+    "dateModified": "2021-02-02T20:56:27+01:00",
+    "url" : "https://yunli.nl/blogs/2021-02-02lessons_learned_rc2020/",
+    "description": "I took part in the recently-finished ML Reproducibility Challenge 2020, and together with a great team we attempted to reproduce one of the papers as part of a course …",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://yunli.nl/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "yun's attic",
+      "url": "https://yunli.nl/"
+    }
+  }
+</script>
+
+<script src="/js/script-early.min.a8d899ac88f2a778985767b86ce681945e3fa2069c3c9efd17e5e5b594d3ba1f.js"></script>
+<script defer src="/js/lib/jquery.slim.min.e3e5f35d586c0e6a9a9d7187687be087580c40a5f8d0e52f0c4053bbc25c98db.js"></script>
+<script defer src="/js/lib/umbrella.min.6e17830ccdded0a13b96d6993865b58202bc2ee750e5892a51858ab048b2bebb.js"></script>
+<script defer src="/js/mobile.min.3a3510028bab9810834389725137cfa50f5d3231799ef9ac70769331fa59859a.js"></script>
+<script defer src="/js/script.min.f7f56769569fdf7a80d073b6775c6cd9ed8ae528864cd3f2aa1c8c3fe73f87ea.js"></script>
+
+
+</head>
+
+<body class="single-page">
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header">
+<a href="/" title="Home" rel="home" class="header__logo"><img src="/images/logo.png" alt="Home" class="header__logo-image"></a>
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
+</h1>
+<div class="region header__region">
+</div>
+</header>
+
+<nav class="main-menu layout__navigation">
+<h2 class="visually-hidden">Main menu</h2>
+<ul class="navbar">
+<li><a href="/">Home</a></li>
+<li><a href="/recipes/">Recipes</a></li>
+<li><a href="/about/">About</a></li>
+<li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
+<li><a href="/sketchbook/">Sketchbooks</a></li>
+</ul>
+</nav>
+
+
+<main class="main layout__main">
+<article class="section-blogs single-view">
+<header>
+<h1 class="title title-submitted">Lessons Learned from RC2020</h1>
+<div class="submitted">
+<time class="created-date" datetime="2021-02-02T20:56:27&#43;01:00">2 February, 2021</time>
+</div>
+</header>
+<div class="content">
+<p>I took part in the recently-finished <a href="https://paperswithcode.com/rc2020">ML Reproducibility Challenge 2020</a>, and <a href="https://github.com/MotherOfUnicorns/FACT_AI_project">together with a great team</a> we attempted to reproduce one of the papers as part of a course assignment.</p>
+<p>This is just my attempt to get back to blogging, as well as writing down some lessons learned.
+It&rsquo;s by no means a criticism of anything, but lately I&rsquo;ve realised if I don&rsquo;t write things down I&rsquo;ll most likely forget all about it in two or three months.</p>
+<p>Short story is, we couldn&rsquo;t completely reproduce the original paper results. From my limited sample size of talking to and listening to presentations of my fellow students participating in this challenge, it seems like it&rsquo;s quite common to <em><strong>not</strong></em> be able to reproduce a paper&rsquo;s results completely, not in four weeks at least. That&rsquo;s not as optimistic as I had thought.</p>
+<p>In a way my group already had a head start, because the paper we tried to reproduce already came with some pretty extensive code, nuts and bolts included.
+But after scrolling through pages after pages, we realised this code is adapted from another paper, so there are a lot of dangling variables and unfinished experiments hidden inside, and at times this could be really confusing.</p>
+<p>Being the overachieving students that we are, in the very beginning of our reproducibility study we were already thinking about the million different ways we could test this model or examine the authors' claims under more general settings.
+But training these babies is slow, so it&rsquo;s quite easy to get discouraged by the progress.
+Then I felt somewhat swamped in discussions that were mostly speculation rather than factually grounded.
+That coupled with (almost) midnight zoom meetings was definitely not helpful for my sleep quality.</p>
+<p>Overall the experience was a very rewarding one, and I want to try to summarise what I observed/learned:</p>
+<ul>
+<li>Document your code.</li>
+<li>Remove the bits in your code that you don&rsquo;t actually use.</li>
+<li>Test your code. Don&rsquo;t write one thing and your code is actually doing another (wildly different thing).</li>
+<li>At my previous job they made sure we read this book: <a href="https://www.goodreads.com/book/show/3735293-clean-code"><em>Clean Code</em></a>, or at least get the gist of it. I think that&rsquo;s a pretty good idea, even if you&rsquo;re &ldquo;just a data guy/gal/person&rdquo;.</li>
+<li>Optimise your code so it doesn&rsquo;t take an insane amount of time (1.5 days! on a NVIDIA 1080 Ti) to train a not-grossly-complex model.</li>
+<li>Related to the previous point, make sure you&rsquo;re not fine-tuning parameters that you don&rsquo;t actually want to change, such as embeddings, unless that&rsquo;s your intention.</li>
+<li>If the dataset only has a train/test split, and you would also want a dev split, it&rsquo;s better to shave it off from the test part rather than train part, otherwise you might overfit your model because your train set and dev set is too similar/correlated.</li>
+<li>Train a model and evaluate multiple times with different seeds to make sure you&rsquo;re not just getting lucky with your results.</li>
+<li>Report your hyper-parameters.</li>
+<li>Report your complete results (in an appendix or supplementary materials), don&rsquo;t cherry-pick or leave the impression of cherry-picking your results just to support your claim.</li>
+<li>It&rsquo;s probably not a good idea to use the same metric to evaluate different datasets/tasks. An accuracy improvement from 65% to 67% is not as awe-inspiring as an improvement from 95% to 97%.</li>
+<li>Don&rsquo;t speculate before you get your results from the experiments (talking to myself right now :D). It&rsquo;s easier to come up with one plan after you have solid results than to have ten contingency plans before seeing any actual numbers.</li>
+</ul>
+<p>I actually think the scientific community would be much happier and we&rsquo;d be making much better progress as a whole if we all publish &ldquo;failed&rdquo; experiments rather than just those shiny ones.
+Knowing what will not work and what not to do is, in my opinion, much more helpful for gaining new insights and coming up with new ideas to experiment with.</p>
+<p>Maybe we need to start a negative-arXiv to host the dumb, the unglorious and the unprestigious.</p>
+
+
+</div>
+</article>
+</main>
+
+
+<aside class="sidebar layout__second-sidebar">
+<section>
+<h4 class="menu"><a href="/blogs/" class="active" aria-current="page">Blogs</a></h4>
+<ul class="menu">
+<li><a href="/blogs/2021-02-02lessons_learned_rc2020/" class="active" aria-current="page">Lessons Learned from RC2020</a></li>
+<li><a href="/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">Rough Estimate: When to go back to school?</a></li>
+<li><a href="/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
+<li><a href="/blogs/2020-07-03-write_tests/">Write Tests for Your Data Science Project</a></li>
+<li><a href="/blogs/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
+<li><a href="/blogs/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
+<li><a href="/blogs/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
+<li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
+</ul>
+</section>
+<section>
+<h4 class="menu"><a href="/sketchbook/">Sketchbooks</a></h4>
+<ul class="menu">
+<li><a href="/sketchbook/2020-10-25_autumn2/">Autumn 2020 II</a></li>
+<li><a href="/sketchbook/2020-10-25_autumn1/">Autumn 2020 I</a></li>
+<li><a href="/sketchbook/2020-09-10_dissociate2/">Dissociate II</a></li>
+<li><a href="/sketchbook/2020-08-23_dissociate1/">Dissociate I</a></li>
+<li><a href="/sketchbook/2020-08-08_portrait/">Another Random Portrait</a></li>
+<li><a href="/sketchbook/2020-08-07_mauve/">Mauve</a></li>
+<li><a href="/sketchbook/2020-08-06_wine/">Wine</a></li>
+<li><a href="/sketchbook/2020-07-24_value_study/">Value Study</a></li>
+<li><a href="/sketchbook/2020-07-02_assholes/">Peaches</a></li>
+<li><a href="/sketchbook/2020-06-02-portrait/">Random Portrait</a></li>
+<li><a href="/sketchbook/2020-05-30-bay_leaf/">Bay Leaf</a></li>
+<li><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></li>
+<li><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></li>
+</ul>
+</section>
+</aside>
+<footer class="footer layout__footer">
+<p>This site is licensed under a <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> License.</p>
+
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+</footer>
+
+</div>
+<div class="mobile-nav" dir="ltr">
+  <div class="mobile-nav__cover"></div>
+  <a href="#navigation" class="mobile-nav__toggle" aria-haspopup="true" role="button">Menu</a>
+  <div class="mobile-nav__sheet">
+    <div class="mobile-nav__region">
+    
+    </div>
+    <nav class="mobile-nav__main-menu">
+    <h2 class="visually-hidden">Main menu</h2>
+    <ul class="mobile-nav__navbar">
+    <li><a href="/">Home</a></li>
+    <li><a href="/recipes/">Recipes</a></li>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
+    <li><a href="/sketchbook/">Sketchbooks</a></li>
+    </ul>
+    </nav>
+  </div>
+</div>
+</body>
+</html>

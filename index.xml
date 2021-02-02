@@ -6,8 +6,44 @@
     <description>Recent content on yun&#39;s attic</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 25 Oct 2020 22:01:56 +0200</lastBuildDate>
+    <lastBuildDate>Tue, 02 Feb 2021 20:56:27 +0100</lastBuildDate>
     <atom:link href="https://yunli.nl/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Lessons Learned from RC2020</title>
+      <link>https://yunli.nl/blogs/2021-02-02lessons_learned_rc2020/</link>
+      <pubDate>Tue, 02 Feb 2021 20:56:27 +0100</pubDate>
+      <guid>https://yunli.nl/blogs/2021-02-02lessons_learned_rc2020/</guid>
+      <description>&lt;p&gt;I took part in the recently-finished &lt;a href=&#34;https://paperswithcode.com/rc2020&#34;&gt;ML Reproducibility Challenge 2020&lt;/a&gt;, and &lt;a href=&#34;https://github.com/MotherOfUnicorns/FACT_AI_project&#34;&gt;together with a great team&lt;/a&gt; we attempted to reproduce one of the papers as part of a course assignment.&lt;/p&gt;
+&lt;p&gt;This is just my attempt to get back to blogging, as well as writing down some lessons learned.
+It&amp;rsquo;s by no means a criticism of anything, but lately I&amp;rsquo;ve realised if I don&amp;rsquo;t write things down I&amp;rsquo;ll most likely forget all about it in two or three months.&lt;/p&gt;
+&lt;p&gt;Short story is, we couldn&amp;rsquo;t completely reproduce the original paper results. From my limited sample size of talking to and listening to presentations of my fellow students participating in this challenge, it seems like it&amp;rsquo;s quite common to &lt;em&gt;&lt;strong&gt;not&lt;/strong&gt;&lt;/em&gt; be able to reproduce a paper&amp;rsquo;s results completely, not in four weeks at least. That&amp;rsquo;s not as optimistic as I had thought.&lt;/p&gt;
+&lt;p&gt;In a way my group already had a head start, because the paper we tried to reproduce already came with some pretty extensive code, nuts and bolts included.
+But after scrolling through pages after pages, we realised this code is adapted from another paper, so there are a lot of dangling variables and unfinished experiments hidden inside, and at times this could be really confusing.&lt;/p&gt;
+&lt;p&gt;Being the overachieving students that we are, in the very beginning of our reproducibility study we were already thinking about the million different ways we could test this model or examine the authors&#39; claims under more general settings.
+But training these babies is slow, so it&amp;rsquo;s quite easy to get discouraged by the progress.
+Then I felt somewhat swamped in discussions that were mostly speculation rather than factually grounded.
+That coupled with (almost) midnight zoom meetings was definitely not helpful for my sleep quality.&lt;/p&gt;
+&lt;p&gt;Overall the experience was a very rewarding one, and I want to try to summarise what I observed/learned:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Document your code.&lt;/li&gt;
+&lt;li&gt;Remove the bits in your code that you don&amp;rsquo;t actually use.&lt;/li&gt;
+&lt;li&gt;Test your code. Don&amp;rsquo;t write one thing and your code is actually doing another (wildly different thing).&lt;/li&gt;
+&lt;li&gt;At my previous job they made sure we read this book: &lt;a href=&#34;https://www.goodreads.com/book/show/3735293-clean-code&#34;&gt;&lt;em&gt;Clean Code&lt;/em&gt;&lt;/a&gt;, or at least get the gist of it. I think that&amp;rsquo;s a pretty good idea, even if you&amp;rsquo;re &amp;ldquo;just a data guy/gal/person&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;Optimise your code so it doesn&amp;rsquo;t take an insane amount of time (1.5 days! on a NVIDIA 1080 Ti) to train a not-grossly-complex model.&lt;/li&gt;
+&lt;li&gt;Related to the previous point, make sure you&amp;rsquo;re not fine-tuning parameters that you don&amp;rsquo;t actually want to change, such as embeddings, unless that&amp;rsquo;s your intention.&lt;/li&gt;
+&lt;li&gt;If the dataset only has a train/test split, and you would also want a dev split, it&amp;rsquo;s better to shave it off from the test part rather than train part, otherwise you might overfit your model because your train set and dev set is too similar/correlated.&lt;/li&gt;
+&lt;li&gt;Train a model and evaluate multiple times with different seeds to make sure you&amp;rsquo;re not just getting lucky with your results.&lt;/li&gt;
+&lt;li&gt;Report your hyper-parameters.&lt;/li&gt;
+&lt;li&gt;Report your complete results (in an appendix or supplementary materials), don&amp;rsquo;t cherry-pick or leave the impression of cherry-picking your results just to support your claim.&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s probably not a good idea to use the same metric to evaluate different datasets/tasks. An accuracy improvement from 65% to 67% is not as awe-inspiring as an improvement from 95% to 97%.&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t speculate before you get your results from the experiments (talking to myself right now :D). It&amp;rsquo;s easier to come up with one plan after you have solid results than to have ten contingency plans before seeing any actual numbers.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I actually think the scientific community would be much happier and we&amp;rsquo;d be making much better progress as a whole if we all publish &amp;ldquo;failed&amp;rdquo; experiments rather than just those shiny ones.
+Knowing what will not work and what not to do is, in my opinion, much more helpful for gaining new insights and coming up with new ideas to experiment with.&lt;/p&gt;
+&lt;p&gt;Maybe we need to start a negative-arXiv to host the dumb, the unglorious and the unprestigious.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Recipes</title>
