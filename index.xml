@@ -372,7 +372,7 @@ The default behaviour of &lt;a href=&#34;https://scikit-learn.org/stable/modules
 &lt;p&gt;use &lt;code&gt;tzinfo=...&lt;/code&gt; when creating a &lt;code&gt;datetime.datetime&lt;/code&gt; object&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; dt
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pytz &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; timezone
-   
+
 tz &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; timezone(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt;)
 dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tz)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;which produces this result:&lt;/p&gt;
