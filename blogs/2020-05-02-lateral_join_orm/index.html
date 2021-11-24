@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://yunli.nl/blogs/2020-05-02-lateral_join_orm/">
 <meta property="og:type" content="article">
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.89.4" />
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 <link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
-<link rel="stylesheet" href="/css/styles.159e5347492c734a666a2678db9a478c339b9ad376372e062cd19572540448a1.css">
+<link rel="stylesheet" href="/css/styles.203e732c5f61011e9025d06034f611850df429e48ce7532103b43b9a18e86dd4.css">
 <link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
 
 <script type="application/ld+json">
@@ -93,7 +93,7 @@
 <p>When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.</p>
 <p>One way to achieve this is to load all data with Python, and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html">resample</a> or <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html">reindex</a> it with Pandas.</p>
 <p>An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span>
 <span style="color:#66d9ef">from</span> generate_series(<span style="color:#e6db74">&#39;2020-01-01&#39;</span>, <span style="color:#e6db74">&#39;2020-01-15&#39;</span>, <span style="color:#e6db74">&#39;2 hour&#39;</span>::interval) sampled_at
 <span style="color:#66d9ef">join</span> <span style="color:#66d9ef">lateral</span> (
     <span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span>
@@ -104,11 +104,12 @@
     <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> f.ts <span style="color:#66d9ef">desc</span>
     <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">1</span>
 ) p <span style="color:#66d9ef">on</span> <span style="color:#66d9ef">true</span>
-</code></pre></div><p>And since I&rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!</p>
-<p>I found the SQLAlchemy documentation quite difficult to understand. I get the impression that to me there are many, many different ways to accomplish the same thing under this framework, and at some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&rsquo;t directly answer the question I have.</p>
+</code></pre></div><p>Since I&rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!</p>
+<p>I found the SQLAlchemy documentation quite difficult to grapple with at times, and I get the impression that there are many, many different ways to accomplish the same thing.
+At some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&rsquo;t directly answer the question I have.</p>
 <p>Then I came across this <a href="https://adam-gligor.github.io/2019/11/15/sqlalchemy-subqueries/">blog post</a> by Adam Gligor, which really helped me comb my thoughts and finally decide on how I want to approach it.</p>
 <p>First take care of all the imports:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> datetime <span style="color:#f92672">as</span> dt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> datetime <span style="color:#66d9ef">as</span> dt
 
 <span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> and_, desc, true
 <span style="color:#f92672">from</span> sqlalchemy.orm <span style="color:#f92672">import</span> aliased, sessionmaker
@@ -120,8 +121,8 @@
 
 _Session <span style="color:#f92672">=</span> sessionmaker(bind<span style="color:#f92672">=</span>DB_ENGINE)
 session <span style="color:#f92672">=</span> _Session()
-</code></pre></div><p>I wrote this subquery to generate this timeseries, and aliased it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">start_ts, end_ts <span style="color:#f92672">=</span> dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>), dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>)
+</code></pre></div><p>I wrote this subquery to generate timeseries that I want to resample the data on, and aliased it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">start_ts, end_ts <span style="color:#f92672">=</span> dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>), dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>)
 interval <span style="color:#f92672">=</span> dt<span style="color:#f92672">.</span>timedelta(hours<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
 subquery_ts <span style="color:#f92672">=</span> (
     session<span style="color:#f92672">.</span>query(
@@ -134,14 +135,14 @@ subquery_ts <span style="color:#f92672">=</span> (
 )
 a <span style="color:#f92672">=</span> aliased(subquery_ts)
 </code></pre></div><p>The <code>aliased()</code> function does something like this in SQL:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> some_table <span style="color:#66d9ef">as</span> some_alias
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> some_table <span style="color:#66d9ef">as</span> some_alias
 ...
-</code></pre></div><p>It essentially allows you to give some (intermediate or temporary) table a name, so that you can reference it later again, either when joining it with another table, or joining with itself.</p>
+</code></pre></div><p>It essentially allows you to give a name to some (intermediate or temporary) table, so that you can reference it later, either when joining it with another table, or joining it with itself.</p>
 <p>Then I wrote another subquery to get the most recent price update at each time point I want to sample.
 Note that here I compared the timestamp in <code>FxPrice</code> table with <code>a.c.sampled_at</code>, where <code>a</code> is the aforementioned alias to the table created using <code>generate_series</code>.
 (The <code>.c</code> in <code>a.c</code> is for <code>columns</code>, so <code>a.c.sampled_at</code> gets you the column named <code>sampled_at</code>.)</p>
 <p>Without the aliasing I wouldn&rsquo;t be able to achieve this effect; instead it would create a nested subquery and that&rsquo;s not what I want.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">subquery_price <span style="color:#f92672">=</span> (
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">subquery_price <span style="color:#f92672">=</span> (
     session<span style="color:#f92672">.</span>query(FxPrice)
     <span style="color:#f92672">.</span>filter(
         and_(
@@ -156,7 +157,7 @@ Note that here I compared the timestamp in <code>FxPrice</code> table with <code
     <span style="color:#f92672">.</span>lateral()
 )
 </code></pre></div><p>Finally, putting everything together:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">results <span style="color:#f92672">=</span> (
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">results <span style="color:#f92672">=</span> (
     session<span style="color:#f92672">.</span>query(
         subquery_price<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>ts,
         a,
@@ -169,7 +170,7 @@ Note that here I compared the timestamp in <code>FxPrice</code> table with <code
     <span style="color:#f92672">.</span>all()
 )
 </code></pre></div><p>Which actually produces the following query:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">SELECT</span> anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
 <span style="color:#66d9ef">FROM</span> (
     <span style="color:#66d9ef">SELECT</span> generate_series(:generate_series_1, :generate_series_2, :generate_series_3) <span style="color:#66d9ef">AS</span> sampled_at
     ) <span style="color:#66d9ef">AS</span> anon_2
@@ -184,7 +185,7 @@ Note that here I compared the timestamp in <code>FxPrice</code> table with <code
     ) <span style="color:#66d9ef">AS</span> anon_1
 <span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">true</span>
 </code></pre></div><p>where the parameters are:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"> {
     <span style="color:#e6db74">&#39;generate_series_1&#39;</span>: datetime<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>),
     <span style="color:#e6db74">&#39;generate_series_2&#39;</span>: datetime<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>),
     <span style="color:#e6db74">&#39;generate_series_3&#39;</span>: datetime<span style="color:#f92672">.</span>timedelta(seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">7200</span>),

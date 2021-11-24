@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://yunli.nl/blogs/2020-05-28-schema_name/">
 <meta property="og:type" content="article">
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.89.4" />
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 <link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
-<link rel="stylesheet" href="/css/styles.159e5347492c734a666a2678db9a478c339b9ad376372e062cd19572540448a1.css">
+<link rel="stylesheet" href="/css/styles.203e732c5f61011e9025d06034f611850df429e48ce7532103b43b9a18e86dd4.css">
 <link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
 
 <script type="application/ld+json">
@@ -94,7 +94,7 @@
 <p>The next step would be to write my own Python API to query data from the database. The easy way for me would be to stick a bunch of SQL queries in some python functions, but why do that when you can make life more complicated! I&rsquo;ve been wanting to learn about <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a>, and decided this would be my chance to try it out with SQLAlchemy.</p>
 <h2 id="foreign-keys">foreign keys</h2>
 <p>I first created these models:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> Column, ForeignKey
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> Column, ForeignKey
 <span style="color:#f92672">from</span> sqlalchemy.dialects.postgresql <span style="color:#f92672">import</span> DOUBLE_PRECISION, TEXT, TIMESTAMP
 <span style="color:#f92672">from</span> sqlalchemy.ext.declarative <span style="color:#f92672">import</span> declarative_base
 <span style="color:#f92672">from</span> sqlalchemy.orm <span style="color:#f92672">import</span> relationship
@@ -103,20 +103,20 @@ Base <span style="color:#f92672">=</span> declarative_base()
 
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ModelMixin</span>:
     __table_args__ <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;schema&#34;</span>: <span style="color:#e6db74">&#34;alphavantage&#34;</span>}
-    created_at <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span>True))
+    created_at <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>))
 
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Currency</span>(Base, ModelMixin):
     __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;currencies&#34;</span>
-    currency <span style="color:#f92672">=</span> Column(TEXT, primary_key<span style="color:#f92672">=</span>True)
+    currency <span style="color:#f92672">=</span> Column(TEXT, primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
 
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FxPrice</span>(Base, ModelMixin):
     __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fx&#34;</span>
-    ts <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span>True), primary_key<span style="color:#f92672">=</span>True)
+    ts <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
     currency_from <span style="color:#f92672">=</span> Column(
-        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
     )
     currency_to <span style="color:#f92672">=</span> Column(
-        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
     )
     price <span style="color:#f92672">=</span> Column(DOUBLE_PRECISION)
 
@@ -124,27 +124,27 @@ Base <span style="color:#f92672">=</span> declarative_base()
     _currency_to <span style="color:#f92672">=</span> relationship(<span style="color:#e6db74">&#34;Currency&#34;</span>, foreign_keys<span style="color:#f92672">=</span>[currency_to])
 </code></pre></div><p>With an existing database, my goal is to reproduce the tables with a SQLAlchemy model, so I can interact with the database through this bit of Python code.</p>
 <p>But it didn&rsquo;t work, and kept producing this error:</p>
-<pre><code>sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column 'fx.currency_from' could not find table 'currencies' with which to generate a foreign key to target column 'currency'
+<pre tabindex="0"><code>sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column 'fx.currency_from' could not find table 'currencies' with which to generate a foreign key to target column 'currency'
 </code></pre><p>After much digging, I found this is because the tables are not in the default <code>public</code> schema, and the solution is to specify schema name while declaring the columns with foreign keys:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    currency_from <span style="color:#f92672">=</span> Column(
-        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    currency_from <span style="color:#f92672">=</span> Column(
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
     )
     currency_to <span style="color:#f92672">=</span> Column(
-        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span>True
+        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
     )
 </code></pre></div><h2 id="alembic">alembic</h2>
 <p><a href="https://alembic.sqlalchemy.org/en/latest/">Alembic</a> is a tool for helping with database migrations. It helps tie together your SQLAlchemy models with tables in your database, so that any change you make in your ORM model (e.g. add a column, introduce a new table, etc) will be automatically reflected in your databse.</p>
 <p>It was quite easy to set up, but when I ran</p>
-<pre><code>alembic revision --autogenerate
+<pre tabindex="0"><code>alembic revision --autogenerate
 alembic upgrade head --sql
 </code></pre><p>to try it out, it ended up trying to create two new tables in my database <code>public.&quot;alphavantage.currencies&quot;</code> and <code>public.&quot;alphavantage.fx&quot;</code>. The expected behaviour is to do nothing, because those two tables already exist in my database.</p>
 <p>Apparenly, by default, alembic only discovers tables in the default schema. In this case the tables are in a different <code>alphavantage</code> schema, and that caused some confusion.</p>
 <p>To change its default behaviour, locate the <code>env.py</code> file in <code>./alembic</code>, and add this line</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">include_schemas<span style="color:#f92672">=</span>True
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">include_schemas<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
 </code></pre></div><p>in the bit about</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">context<span style="color:#f92672">.</span>configure()
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">context<span style="color:#f92672">.</span>configure()
 </code></pre></div><p>of both of these two functions</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_offline</span>():
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_offline</span>():
     <span style="color:#f92672">...</span>
 
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_online</span>()

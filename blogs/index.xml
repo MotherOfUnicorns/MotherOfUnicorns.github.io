@@ -69,11 +69,11 @@ And to take it further, why no use the number of daily new cases as a substitute
 &lt;p&gt;Another bad assumption! But why not, this is a rough estimate.&lt;/p&gt;
 &lt;p&gt;The rest of the things fall into place very quickly.&lt;/p&gt;
 &lt;p&gt;If &lt;code&gt;s&lt;/code&gt; is the number of daily new cases, &lt;code&gt;P&lt;/code&gt; the total population of the country/province/whatever, &lt;code&gt;N&lt;/code&gt; the number of people I meet/share a room with every time I venter out of my home into the university campus, then the probability of no one I meet is carrying the virus is&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;(1 - s/P)^N
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;(1 - s/P)^N
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;So the probability of at least one person is carrying the virus is&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1 - (1 - s/P)^N
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1 - (1 - s/P)^N
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;If I accept at most &lt;code&gt;a = 0.1%&lt;/code&gt; risk of meeting someone who carries the virus, then I can formulate it as&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1 - (1 - s/P)^N &amp;lt;= a
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1 - (1 - s/P)^N &amp;lt;= a
     (1 - s/P)^N &amp;gt;= 1 - a
         1 - s/P &amp;gt;= (1 - a)^(1/N)
             s/P &amp;lt;= 1 - (1 - a)^(1/N)
@@ -94,11 +94,11 @@ But I am now a committed woman (to homework and group projects) so a rough estim
       <guid>https://yunli.nl/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/</guid>
       <description>&lt;p&gt;I have a couple of scripts that I&amp;rsquo;d like to run at night, but I also want to leave my machine suspended to RAM overnight to conserve energy (and reduce noise, the fan is a beast!). So this is just a note for myself about how I went about it this time, using &lt;code&gt;rtcwake&lt;/code&gt; and &lt;code&gt;crontab&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Here&amp;rsquo;s the crontab I originally had, which is triggered once a day in the afternoon:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;59 15 * * *  /some/bash/script.sh
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;59 15 * * *  /some/bash/script.sh
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But now I want to run it at night, when I&amp;rsquo;m not around my computer, which like me is probably also asleep. So I need to make sure the machine is in an awake state just before the cron jobs are scheduled to be executed.&lt;/p&gt;
 &lt;p&gt;Some minutes of DuckDuckGo later I found &lt;a href=&#34;https://www.man7.org/linux/man-pages/man8/rtcwake.8.html&#34;&gt;&lt;code&gt;rtcwake&lt;/code&gt;&lt;/a&gt;, which uses the hardware clock on the motherboard to send a signal to wake up the machine at desired time. Sounds like exactly what I need.&lt;/p&gt;
 &lt;p&gt;So now my crontab becomes:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
 59 3 * * * /some/bash/script.sh
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Some explanations:&lt;/p&gt;
 &lt;ul&gt;
@@ -112,11 +112,11 @@ But I am now a committed woman (to homework and group projects) so a rough estim
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;with &lt;code&gt;sudo crontab -e&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1  4 * * *  sudo rtcwake -m no -t $(date +\%s -d &amp;quot;tomorrow 03:55&amp;quot;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;with your regular &lt;code&gt;crontab -e&lt;/code&gt; (of course, this can also be run under root&amp;rsquo;s crontab, but I don&amp;rsquo;t want to clutter that up):&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;59 3 * * * /some/bash/script.sh
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;59 3 * * * /some/bash/script.sh
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Et voilà, it&amp;rsquo;s as sweet as a dream, pun intended.&lt;/p&gt;
@@ -154,20 +154,20 @@ The default behaviour of &lt;a href=&#34;https://scikit-learn.org/stable/modules
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;use &lt;code&gt;tzinfo=...&lt;/code&gt; when creating a &lt;code&gt;datetime.datetime&lt;/code&gt; object&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; dt
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; dt
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pytz &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; timezone
 
 tz &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; timezone(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt;)
 dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tz)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;which produces this result:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&amp;lt;&lt;/span&gt;DstTzInfo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt; LMT&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; STD&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&amp;lt;&lt;/span&gt;DstTzInfo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt; LMT&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; STD&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;use &lt;code&gt;timezone.localize()&lt;/code&gt; on an existing &lt;code&gt;datetime.datetime&lt;/code&gt; object&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;tz &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; timezone(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt;)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;tz &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; timezone(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt;)
 tz&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;localize(dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;))
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;which gives this:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&amp;lt;&lt;/span&gt;DstTzInfo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt; CET&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; STD&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, tzinfo&lt;span style=&#34;color:#f92672&#34;&gt;=&amp;lt;&lt;/span&gt;DstTzInfo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Europe/Amsterdam&amp;#39;&lt;/span&gt; CET&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; STD&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Why are they not the same???&lt;/p&gt;
@@ -186,7 +186,7 @@ tz&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;localize(dt&lt;span st
       <description>&lt;p&gt;When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.&lt;/p&gt;
 &lt;p&gt;One way to achieve this is to load all data with Python, and &lt;a href=&#34;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html&#34;&gt;resample&lt;/a&gt; or &lt;a href=&#34;https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html&#34;&gt;reindex&lt;/a&gt; it with Pandas.&lt;/p&gt;
 &lt;p&gt;An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&amp;rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; generate_series(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2020-01-01&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2020-01-15&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2 hour&amp;#39;&lt;/span&gt;::interval) sampled_at
 &lt;span style=&#34;color:#66d9ef&#34;&gt;join&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;lateral&lt;/span&gt; (
     &lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
@@ -197,11 +197,12 @@ tz&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;localize(dt&lt;span st
     &lt;span style=&#34;color:#66d9ef&#34;&gt;order&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;by&lt;/span&gt; f.ts &lt;span style=&#34;color:#66d9ef&#34;&gt;desc&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;limit&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
 ) p &lt;span style=&#34;color:#66d9ef&#34;&gt;on&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And since I&amp;rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!&lt;/p&gt;
-&lt;p&gt;I found the SQLAlchemy documentation quite difficult to understand. I get the impression that to me there are many, many different ways to accomplish the same thing under this framework, and at some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&amp;rsquo;t directly answer the question I have.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Since I&amp;rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!&lt;/p&gt;
+&lt;p&gt;I found the SQLAlchemy documentation quite difficult to grapple with at times, and I get the impression that there are many, many different ways to accomplish the same thing.
+At some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&amp;rsquo;t directly answer the question I have.&lt;/p&gt;
 &lt;p&gt;Then I came across this &lt;a href=&#34;https://adam-gligor.github.io/2019/11/15/sqlalchemy-subqueries/&#34;&gt;blog post&lt;/a&gt; by Adam Gligor, which really helped me comb my thoughts and finally decide on how I want to approach it.&lt;/p&gt;
 &lt;p&gt;First take care of all the imports:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#f92672&#34;&gt;as&lt;/span&gt; dt
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; dt
 
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; and_, desc, true
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.orm &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; aliased, sessionmaker
@@ -213,8 +214,8 @@ tz&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;localize(dt&lt;span st
 
 _Session &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sessionmaker(bind&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DB_ENGINE)
 session &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; _Session()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I wrote this subquery to generate this timeseries, and aliased it:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;start_ts, end_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;), dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I wrote this subquery to generate timeseries that I want to resample the data on, and aliased it:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;start_ts, end_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;), dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
 interval &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; dt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(hours&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
 subquery_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
     session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(
@@ -227,14 +228,14 @@ subquery_ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
 )
 a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; aliased(subquery_ts)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;aliased()&lt;/code&gt; function does something like this in SQL:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; some_table &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; some_alias
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;select&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;from&lt;/span&gt; some_table &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; some_alias
 ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It essentially allows you to give some (intermediate or temporary) table a name, so that you can reference it later again, either when joining it with another table, or joining with itself.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It essentially allows you to give a name to some (intermediate or temporary) table, so that you can reference it later, either when joining it with another table, or joining it with itself.&lt;/p&gt;
 &lt;p&gt;Then I wrote another subquery to get the most recent price update at each time point I want to sample.
 Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; table with &lt;code&gt;a.c.sampled_at&lt;/code&gt;, where &lt;code&gt;a&lt;/code&gt; is the aforementioned alias to the table created using &lt;code&gt;generate_series&lt;/code&gt;.
 (The &lt;code&gt;.c&lt;/code&gt; in &lt;code&gt;a.c&lt;/code&gt; is for &lt;code&gt;columns&lt;/code&gt;, so &lt;code&gt;a.c.sampled_at&lt;/code&gt; gets you the column named &lt;code&gt;sampled_at&lt;/code&gt;.)&lt;/p&gt;
 &lt;p&gt;Without the aliasing I wouldn&amp;rsquo;t be able to achieve this effect; instead it would create a nested subquery and that&amp;rsquo;s not what I want.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;subquery_price &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;subquery_price &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
     session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(FxPrice)
     &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;filter(
         and_(
@@ -249,7 +250,7 @@ Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; tabl
     &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;lateral()
 )
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finally, putting everything together:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;results &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;results &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
     session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;query(
         subquery_price&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ts,
         a,
@@ -262,7 +263,7 @@ Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; tabl
     &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;all()
 )
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Which actually produces the following query:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
 &lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt; (
     &lt;span style=&#34;color:#66d9ef&#34;&gt;SELECT&lt;/span&gt; generate_series(:generate_series_1, :generate_series_2, :generate_series_3) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; sampled_at
     ) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; anon_2
@@ -277,7 +278,7 @@ Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; tabl
     ) &lt;span style=&#34;color:#66d9ef&#34;&gt;AS&lt;/span&gt; anon_1
 &lt;span style=&#34;color:#66d9ef&#34;&gt;ON&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;where the parameters are:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt; {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt; {
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_1&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;),
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_2&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime(&lt;span style=&#34;color:#ae81ff&#34;&gt;2020&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;),
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;generate_series_3&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;7200&lt;/span&gt;),
@@ -297,7 +298,7 @@ Note that here I compared the timestamp in &lt;code&gt;FxPrice&lt;/code&gt; tabl
 &lt;p&gt;The next step would be to write my own Python API to query data from the database. The easy way for me would be to stick a bunch of SQL queries in some python functions, but why do that when you can make life more complicated! I&amp;rsquo;ve been wanting to learn about &lt;a href=&#34;https://en.wikipedia.org/wiki/Object-relational_mapping&#34;&gt;ORM&lt;/a&gt;, and decided this would be my chance to try it out with SQLAlchemy.&lt;/p&gt;
 &lt;h2 id=&#34;foreign-keys&#34;&gt;foreign keys&lt;/h2&gt;
 &lt;p&gt;I first created these models:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Column, ForeignKey
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Column, ForeignKey
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.dialects.postgresql &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; DOUBLE_PRECISION, TEXT, TIMESTAMP
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.ext.declarative &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; declarative_base
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; sqlalchemy.orm &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; relationship
@@ -306,20 +307,20 @@ Base &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; declarative_base()
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ModelMixin&lt;/span&gt;:
     __table_args__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage&amp;#34;&lt;/span&gt;}
-    created_at &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True))
+    created_at &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;))
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Currency&lt;/span&gt;(Base, ModelMixin):
     __tablename__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies&amp;#34;&lt;/span&gt;
-    currency &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TEXT, primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+    currency &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TEXT, primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;FxPrice&lt;/span&gt;(Base, ModelMixin):
     __tablename__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fx&amp;#34;&lt;/span&gt;
-    ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+    ts &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(TIMESTAMP(timezone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)
     currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
-        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     )
     currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
-        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     )
     price &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(DOUBLE_PRECISION)
 
@@ -327,27 +328,27 @@ Base &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; declarative_base()
     _currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; relationship(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Currency&amp;#34;&lt;/span&gt;, foreign_keys&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[currency_to])
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With an existing database, my goal is to reproduce the tables with a SQLAlchemy model, so I can interact with the database through this bit of Python code.&lt;/p&gt;
 &lt;p&gt;But it didn&amp;rsquo;t work, and kept producing this error:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column &#39;fx.currency_from&#39; could not find table &#39;currencies&#39; with which to generate a foreign key to target column &#39;currency&#39;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column &#39;fx.currency_from&#39; could not find table &#39;currencies&#39; with which to generate a foreign key to target column &#39;currency&#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;After much digging, I found this is because the tables are not in the default &lt;code&gt;public&lt;/code&gt; schema, and the solution is to specify schema name while declaring the columns with foreign keys:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;    currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
-        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;    currency_from &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     )
     currency_to &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Column(
-        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+        TEXT, ForeignKey(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alphavantage.currencies.currency&amp;#34;&lt;/span&gt;), primary_key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     )
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;alembic&#34;&gt;alembic&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://alembic.sqlalchemy.org/en/latest/&#34;&gt;Alembic&lt;/a&gt; is a tool for helping with database migrations. It helps tie together your SQLAlchemy models with tables in your database, so that any change you make in your ORM model (e.g. add a column, introduce a new table, etc) will be automatically reflected in your databse.&lt;/p&gt;
 &lt;p&gt;It was quite easy to set up, but when I ran&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;alembic revision --autogenerate
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;alembic revision --autogenerate
 alembic upgrade head --sql
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;to try it out, it ended up trying to create two new tables in my database &lt;code&gt;public.&amp;quot;alphavantage.currencies&amp;quot;&lt;/code&gt; and &lt;code&gt;public.&amp;quot;alphavantage.fx&amp;quot;&lt;/code&gt;. The expected behaviour is to do nothing, because those two tables already exist in my database.&lt;/p&gt;
 &lt;p&gt;Apparenly, by default, alembic only discovers tables in the default schema. In this case the tables are in a different &lt;code&gt;alphavantage&lt;/code&gt; schema, and that caused some confusion.&lt;/p&gt;
 &lt;p&gt;To change its default behaviour, locate the &lt;code&gt;env.py&lt;/code&gt; file in &lt;code&gt;./alembic&lt;/code&gt;, and add this line&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;include_schemas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;include_schemas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;in the bit about&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;context&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;configure()
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;context&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;configure()
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;of both of these two functions&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run_migrations_offline&lt;/span&gt;():
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run_migrations_offline&lt;/span&gt;():
     &lt;span style=&#34;color:#f92672&#34;&gt;...&lt;/span&gt;
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run_migrations_online&lt;/span&gt;()

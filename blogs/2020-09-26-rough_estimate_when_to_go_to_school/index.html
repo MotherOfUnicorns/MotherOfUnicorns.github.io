@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://yunli.nl/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">
 <meta property="og:type" content="article">
 
-<meta name="generator" content="Hugo 0.83.1" />
+<meta name="generator" content="Hugo 0.89.4" />
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
@@ -23,7 +23,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
 <link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
-<link rel="stylesheet" href="/css/styles.159e5347492c734a666a2678db9a478c339b9ad376372e062cd19572540448a1.css">
+<link rel="stylesheet" href="/css/styles.203e732c5f61011e9025d06034f611850df429e48ce7532103b43b9a18e86dd4.css">
 <link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
 
 <script type="application/ld+json">
@@ -109,11 +109,11 @@ And to take it further, why no use the number of daily new cases as a substitute
 <p>Another bad assumption! But why not, this is a rough estimate.</p>
 <p>The rest of the things fall into place very quickly.</p>
 <p>If <code>s</code> is the number of daily new cases, <code>P</code> the total population of the country/province/whatever, <code>N</code> the number of people I meet/share a room with every time I venter out of my home into the university campus, then the probability of no one I meet is carrying the virus is</p>
-<pre><code>(1 - s/P)^N
+<pre tabindex="0"><code>(1 - s/P)^N
 </code></pre><p>So the probability of at least one person is carrying the virus is</p>
-<pre><code>1 - (1 - s/P)^N
+<pre tabindex="0"><code>1 - (1 - s/P)^N
 </code></pre><p>If I accept at most <code>a = 0.1%</code> risk of meeting someone who carries the virus, then I can formulate it as</p>
-<pre><code>1 - (1 - s/P)^N &lt;= a
+<pre tabindex="0"><code>1 - (1 - s/P)^N &lt;= a
     (1 - s/P)^N &gt;= 1 - a
         1 - s/P &gt;= (1 - a)^(1/N)
             s/P &lt;= 1 - (1 - a)^(1/N)
