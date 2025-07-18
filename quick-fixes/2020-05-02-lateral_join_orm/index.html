@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="nojs" lang="en-us" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Lateral Join with SQLAlchemy – yun&#39;s attic</title>
+
+<meta name="created" content="2020-06-02T11:54:19+0200">
+<meta name="modified" content="2020-06-02T11:54:19+0200">
+
+<meta name="contact" content="liyun@gmail.com">
+<meta property="og:site_name" content="yun&#39;s attic">
+<meta property="og:title" content="Lateral Join with SQLAlchemy">
+<meta property="og:url" content="https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/">
+<meta property="og:type" content="article">
+
+<meta name="generator" content="Hugo 0.148.1">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="theme-color" content="#ffffff">
+
+
+<link rel="canonical" href="https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<link rel="stylesheet" href="/css/styles.112a16990270a2bb36fb086cb740da909617b1040cbac6f8170f68aa414328a1.css">
+<link rel="stylesheet" href="/css/mobilemenu.dbbf7de443967fe1d83dce47fb19895d79710b23ccd02b84f54d4d39c37e3d2d.css" media="screen">
+<link rel="stylesheet" href="/css/print.1912ba13950e7434fb50dd14d3951bc7f57bb0c16b4f204158b72f0b3844f7a1.css" media="print">
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "headline": "Lateral Join with SQLAlchemy",
+    "datePublished": "2020-06-02T11:54:19+02:00",
+    "dateModified": "2020-06-02T11:54:19+02:00",
+    "url" : "https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/",
+    
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://yunli.nl/"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "yun's attic",
+      "url": "https://yunli.nl/"
+    }
+  }
+</script>
+
+<script src="/js/script-early.2d6255816e36e34bd1948dc5c26ede35687a256c4e2e516e0cd75f383a510c6a.js"></script>
+
+<script defer src="/libs/jquery.slim.min.9261efb3407e3a9096e4654750d8eff6b3a663422f48845c7fbcc65034c340cf.js"></script>
+<script defer src="/js/mobilemenu.7ce1f75fd1d49cd683a008352ad9001f800349629be01d531a19c02b5a84817b.js"></script>
+<script defer src="/js/script.f2979a93a325fecf9605263bd141398a311c8e23388ed7dcff74f92f7e632866.js"></script>
+
+
+
+
+
+
+</head>
+
+<body class="single-page">
+<div class="page layout__page layout__sidebar-second">
+<header class="header layout__header">
+<a href="/" title="Home" rel="home" class="header__logo">
+<img src="/images/logo.png" alt="Home" class="header__logo-image">
+</a>
+<h1 class="header__site-name">
+<a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
+</h1>
+<div class="region header__region">
+</div>
+</header>
+
+<nav class="main-menu mx--xs layout__navigation" aria-label="Main menu">
+<ul class="flex-inline mx--0">
+</ul>
+</nav>
+<div class="mobile-nav" dir="ltr" hidden>
+  <div class="mobile-nav__cover"></div>
+  <button class="mobile-nav__toggle button" aria-expanded="false" aria-controls="sheet">
+    Menu
+    <svg class="mobile-nav__hamburger" viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+      <rect width="80" height="12" x="10" y="20" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="45" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="70" rx="5"></rect>
+    </svg>
+  </button>
+  <div class="mobile-nav__sheet link-inverted link-nav" id="sheet" aria-hidden="true">
+    <div class="mobile-nav__region"></div>
+    <nav class="mobile-nav__main-menu" aria-label="Main menu">
+    <ul class="mobile-nav__navbar">
+    </ul>
+    </nav>
+  </div>
+</div>
+<main class="main layout__main">
+<article class="single-view single-view--quick-fixes">
+<header>
+<h1 class="title mb--xxs">Lateral Join with SQLAlchemy</h1>
+<div class="submitted meta">
+<time class="created-date" datetime="2020-06-02T11:54:19&#43;02:00">2 June, 2020</time>
+
+</div>
+</header>
+
+<p>When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.</p>
+<p>One way to achieve this is to load all data with Python, and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html">resample</a> or <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html">reindex</a> it with Pandas.</p>
+<p>An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">from</span> generate_series(<span style="color:#e6db74">&#39;2020-01-01&#39;</span>, <span style="color:#e6db74">&#39;2020-01-15&#39;</span>, <span style="color:#e6db74">&#39;2 hour&#39;</span>::interval) sampled_at
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">join</span> <span style="color:#66d9ef">lateral</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">from</span> alphavantage.fx f
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">where</span> f.ts <span style="color:#f92672">&lt;=</span> sampled_at
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">and</span> currency_from <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;JPY&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">and</span> currency_to <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;USD&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">order</span> <span style="color:#66d9ef">by</span> f.ts <span style="color:#66d9ef">desc</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">limit</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>) p <span style="color:#66d9ef">on</span> <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><p>Since I&rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!</p>
+<p>I found the SQLAlchemy documentation quite difficult to grapple with at times, and I get the impression that there are many, many different ways to accomplish the same thing.
+At some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&rsquo;t directly answer the question I have.</p>
+<p>Then I came across this <a href="https://adam-gligor.github.io/2019/11/15/sqlalchemy-subqueries/">blog post</a> by Adam Gligor, which really helped me comb my thoughts and finally decide on how I want to approach it.</p>
+<p>First take care of all the imports:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> datetime <span style="color:#66d9ef">as</span> dt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> and_, desc, true
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.orm <span style="color:#f92672">import</span> aliased, sessionmaker
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.sql <span style="color:#f92672">import</span> func
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.sql.expression <span style="color:#f92672">import</span> join
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> .constants <span style="color:#f92672">import</span> DB_ENGINE
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> .models <span style="color:#f92672">import</span> FxPrice
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>_Session <span style="color:#f92672">=</span> sessionmaker(bind<span style="color:#f92672">=</span>DB_ENGINE)
+</span></span><span style="display:flex;"><span>session <span style="color:#f92672">=</span> _Session()
+</span></span></code></pre></div><p>I wrote this subquery to generate timeseries that I want to resample the data on, and aliased it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>start_ts, end_ts <span style="color:#f92672">=</span> dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>), dt<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>interval <span style="color:#f92672">=</span> dt<span style="color:#f92672">.</span>timedelta(hours<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>subquery_ts <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    session<span style="color:#f92672">.</span>query(
+</span></span><span style="display:flex;"><span>        func<span style="color:#f92672">.</span>generate_series(start_ts, end_ts, interval)<span style="color:#f92672">.</span>label(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;sampled_at&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>subquery()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>lateral()
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>a <span style="color:#f92672">=</span> aliased(subquery_ts)
+</span></span></code></pre></div><p>The <code>aliased()</code> function does something like this in SQL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> some_table <span style="color:#66d9ef">as</span> some_alias
+</span></span><span style="display:flex;"><span>...
+</span></span></code></pre></div><p>It essentially allows you to give a name to some (intermediate or temporary) table, so that you can reference it later, either when joining it with another table, or joining it with itself.</p>
+<p>Then I wrote another subquery to get the most recent price update at each time point I want to sample.
+Note that here I compared the timestamp in <code>FxPrice</code> table with <code>a.c.sampled_at</code>, where <code>a</code> is the aforementioned alias to the table created using <code>generate_series</code>.
+(The <code>.c</code> in <code>a.c</code> is for <code>columns</code>, so <code>a.c.sampled_at</code> gets you the column named <code>sampled_at</code>.)</p>
+<p>Without the aliasing I wouldn&rsquo;t be able to achieve this effect; instead it would create a nested subquery and that&rsquo;s not what I want.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>subquery_price <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    session<span style="color:#f92672">.</span>query(FxPrice)
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>filter(
+</span></span><span style="display:flex;"><span>        and_(
+</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#f92672">.</span>ts <span style="color:#f92672">&lt;=</span> a<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>sampled_at,
+</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#f92672">.</span>currency_from <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;JPY&#34;</span>,
+</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#f92672">.</span>currency_to <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;USD&#34;</span>,
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>order_by(desc(FxPrice<span style="color:#f92672">.</span>ts))
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>limit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>subquery()
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>lateral()
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Finally, putting everything together:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>results <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    session<span style="color:#f92672">.</span>query(
+</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>ts,
+</span></span><span style="display:flex;"><span>        a,
+</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>currency_from,
+</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>currency_to,
+</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#f92672">.</span>c<span style="color:#f92672">.</span>price,
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>select_from(a)
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>join(subquery_price, true())
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">.</span>all()
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>Which actually produces the following query:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> anon_1.ts, anon_2.sampled_at, anon_1.currency_from, anon_1.currency_to, anon_1.price
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> generate_series(:generate_series_1, :generate_series_2, :generate_series_3) <span style="color:#66d9ef">AS</span> sampled_at
+</span></span><span style="display:flex;"><span>    ) <span style="color:#66d9ef">AS</span> anon_2
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">JOIN</span> <span style="color:#66d9ef">LATERAL</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">SELECT</span> alphavantage.fx.created_at <span style="color:#66d9ef">AS</span> created_at, alphavantage.fx.ts <span style="color:#66d9ef">AS</span> ts, alphavantage.fx.currency_from <span style="color:#66d9ef">AS</span> currency_from, alphavantage.fx.currency_to <span style="color:#66d9ef">AS</span> currency_to, alphavantage.fx.price <span style="color:#66d9ef">AS</span> price
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">FROM</span> alphavantage.fx
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">WHERE</span> alphavantage.fx.ts <span style="color:#f92672">&lt;=</span> anon_2.sampled_at
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">AND</span> alphavantage.fx.currency_from <span style="color:#f92672">=</span> :currency_from_1
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">AND</span> alphavantage.fx.currency_to <span style="color:#f92672">=</span> :currency_to_1
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">ORDER</span> <span style="color:#66d9ef">BY</span> alphavantage.fx.ts <span style="color:#66d9ef">DESC</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">LIMIT</span> :param_1
+</span></span><span style="display:flex;"><span>    ) <span style="color:#66d9ef">AS</span> anon_1
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">ON</span> <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><p>where the parameters are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;generate_series_1&#39;</span>: datetime<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;generate_series_2&#39;</span>: datetime<span style="color:#f92672">.</span>datetime(<span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;generate_series_3&#39;</span>: datetime<span style="color:#f92672">.</span>timedelta(seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">7200</span>),
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;currency_from_1&#39;</span>: <span style="color:#e6db74">&#39;JPY&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;currency_to_1&#39;</span>: <span style="color:#e6db74">&#39;USD&#39;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;param_1&#39;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span> }
+</span></span></code></pre></div>
+
+</article>
+</main>
+
+
+<aside class="sidebar layout__second-sidebar">
+<nav class="menu">
+<p class="title"><strong><a href="/reading-notes/">Reading Notes</a></strong></p>
+<ul>
+<li><a href="/reading-notes/2021-10-14-the_day_lasts_more_than_a_hundred_years/">The Day Lasts More than a Hundred Years</a></li>
+<li><a href="/reading-notes/2021-04-10-liu_cixin/">Works by Liu Cixin</a></li>
+<li><a href="/reading-notes/2021-03-12-slaughterhouse-five/">Slaughterhouse-Five</a></li>
+<li><a href="/reading-notes/2021-02-07-ham_on_rye/">Ham on Rye</a></li>
+</ul>
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/sketchbook/">Sketchbooks</a></strong></p>
+<ul>
+<li><a href="/sketchbook/2021-03-29_totoros/">Totoros</a></li>
+<li><a href="/sketchbook/2020-10-25_autumn2/">Autumn 2020 II</a></li>
+<li><a href="/sketchbook/2020-10-25_autumn1/">Autumn 2020 I</a></li>
+<li><a href="/sketchbook/2020-09-10_dissociate2/">Dissociate II</a></li>
+<li><a href="/sketchbook/2020-08-23_dissociate1/">Dissociate I</a></li>
+<li><a href="/sketchbook/2020-08-08_portrait/">Another Random Portrait</a></li>
+<li><a href="/sketchbook/2020-08-07_mauve/">Mauve</a></li>
+<li><a href="/sketchbook/2020-08-06_wine/">Wine</a></li>
+<li><a href="/sketchbook/2020-07-24_value_study/">Value Study</a></li>
+<li><a href="/sketchbook/2020-07-02_assholes/">Peaches</a></li>
+<li><a href="/sketchbook/2020-06-02-portrait/">Random Portrait</a></li>
+<li><a href="/sketchbook/2020-05-30-bay_leaf/">Bay Leaf</a></li>
+<li><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></li>
+<li><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></li>
+</ul>
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/blogs/">Blogs</a></strong></p>
+<ul>
+<li><a href="/blogs/2021-02-02lessons_learned_rc2020/">Lessons Learned from RC2020</a></li>
+<li><a href="/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">Rough Estimate: When to go back to school?</a></li>
+<li><a href="/blogs/2020-07-03-write_tests/">Write Tests for Your Data Science Project</a></li>
+<li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
+</ul>
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/quick-fixes/" aria-current="page">Quick Fixes</a></strong></p>
+<ul>
+<li><a href="/quick-fixes/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
+<li><a href="/quick-fixes/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
+<li><a href="/quick-fixes/2020-05-02-lateral_join_orm/" aria-current="page">Lateral Join with SQLAlchemy</a></li>
+<li><a href="/quick-fixes/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
+</ul>
+</nav>
+</aside>
+<footer class="footer layout__footer mt--l">
+<p><span>© yun&#39;s attic</span></p>
+
+<p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
+</footer>
+
+</div>
+</body>
+</html>

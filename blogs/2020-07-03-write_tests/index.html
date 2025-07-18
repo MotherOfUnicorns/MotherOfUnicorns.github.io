@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>Write Tests for Your Data Science Project – yun&#39;s attic</title>
-<meta name="description" content="I never seem to have got into the habit of writing tests as I code. That&amp;amp;rsquo;s bad, I know. But there are so many excuses that prevents it, &amp;amp;ldquo;oh this is just an …">
+
 <meta name="created" content="2020-07-03T13:09:00+0200">
 <meta name="modified" content="2020-07-03T13:09:00+0200">
 
@@ -14,27 +14,28 @@
 <meta property="og:url" content="https://yunli.nl/blogs/2020-07-03-write_tests/">
 <meta property="og:type" content="article">
 
-<meta name="generator" content="Hugo 0.89.4" />
+<meta name="generator" content="Hugo 0.148.1">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
 
 <link rel="canonical" href="https://yunli.nl/blogs/2020-07-03-write_tests/">
+
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-<link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
-<link rel="stylesheet" href="/css/styles.203e732c5f61011e9025d06034f611850df429e48ce7532103b43b9a18e86dd4.css">
-<link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
+<link rel="stylesheet" href="/css/styles.112a16990270a2bb36fb086cb740da909617b1040cbac6f8170f68aa414328a1.css">
+<link rel="stylesheet" href="/css/mobilemenu.dbbf7de443967fe1d83dce47fb19895d79710b23ccd02b84f54d4d39c37e3d2d.css" media="screen">
+<link rel="stylesheet" href="/css/print.1912ba13950e7434fb50dd14d3951bc7f57bb0c16b4f204158b72f0b3844f7a1.css" media="print">
 
 <script type="application/ld+json">
-  {
+{
     "@context": "https://schema.org",
     "@type": "WebPage",
     "headline": "Write Tests for Your Data Science Project",
     "datePublished": "2020-07-03T13:09:00+02:00",
     "dateModified": "2020-07-03T13:09:00+02:00",
     "url" : "https://yunli.nl/blogs/2020-07-03-write_tests/",
-    "description": "I never seem to have got into the habit of writing tests as I code. That\u0026amp;rsquo;s bad, I know. But there are so many excuses that prevents it, \u0026amp;ldquo;oh this is just an …",
+    
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://yunli.nl/"
@@ -47,20 +48,25 @@
   }
 </script>
 
-<script src="/js/script-early.min.3b0e641814c87f6a1d6ffa5e7d597f29faa8ce11482541e8801dc34013817c91.js"></script>
-<script defer src="/js/lib/jquery.slim.min.e3e5f35d586c0e6a9a9d7187687be087580c40a5f8d0e52f0c4053bbc25c98db.js"></script>
-<script defer src="/js/lib/umbrella.min.6e17830ccdded0a13b96d6993865b58202bc2ee750e5892a51858ab048b2bebb.js"></script>
-<script defer src="/js/mobile.min.abb9438113cb72181ecda30b9375cc0771c7ce2e7354414a7c1296b45cf47135.js"></script>
-<script defer src="/js/script.min.a71d161caff0970fa29a345da3bd9b444f629eccf1e4922585879b44f8f30160.js"></script>
+<script src="/js/script-early.2d6255816e36e34bd1948dc5c26ede35687a256c4e2e516e0cd75f383a510c6a.js"></script>
 
-<script async defer src="https://nocookieanalytics.com/latest.js"></script>
+<script defer src="/libs/jquery.slim.min.9261efb3407e3a9096e4654750d8eff6b3a663422f48845c7fbcc65034c340cf.js"></script>
+<script defer src="/js/mobilemenu.7ce1f75fd1d49cd683a008352ad9001f800349629be01d531a19c02b5a84817b.js"></script>
+<script defer src="/js/script.f2979a93a325fecf9605263bd141398a311c8e23388ed7dcff74f92f7e632866.js"></script>
+
+
+
+
+
 
 </head>
 
 <body class="single-page">
 <div class="page layout__page layout__sidebar-second">
 <header class="header layout__header">
-<a href="/" title="Home" rel="home" class="header__logo"><img src="/images/logo.png" alt="Home" class="header__logo-image"></a>
+<a href="/" title="Home" rel="home" class="header__logo">
+<img src="/images/logo.png" alt="Home" class="header__logo-image">
+</a>
 <h1 class="header__site-name">
 <a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
 </h1>
@@ -68,28 +74,38 @@
 </div>
 </header>
 
-<nav class="main-menu layout__navigation">
-<h2 class="visually-hidden">Main menu</h2>
-<ul class="navbar">
-<li><a href="/">Home</a></li>
-<li><a href="/recipes/">Recipes</a></li>
-<li><a href="/about/">About</a></li>
-<li><a href="/reading-notes/">Reading notes</a></li>
-<li><a href="/sketchbook/">Sketchbooks</a></li>
-<li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
+<nav class="main-menu mx--xs layout__navigation" aria-label="Main menu">
+<ul class="flex-inline mx--0">
 </ul>
 </nav>
-
-
+<div class="mobile-nav" dir="ltr" hidden>
+  <div class="mobile-nav__cover"></div>
+  <button class="mobile-nav__toggle button" aria-expanded="false" aria-controls="sheet">
+    Menu
+    <svg class="mobile-nav__hamburger" viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+      <rect width="80" height="12" x="10" y="20" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="45" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="70" rx="5"></rect>
+    </svg>
+  </button>
+  <div class="mobile-nav__sheet link-inverted link-nav" id="sheet" aria-hidden="true">
+    <div class="mobile-nav__region"></div>
+    <nav class="mobile-nav__main-menu" aria-label="Main menu">
+    <ul class="mobile-nav__navbar">
+    </ul>
+    </nav>
+  </div>
+</div>
 <main class="main layout__main">
-<article class="section-blogs single-view">
+<article class="single-view single-view--blogs">
 <header>
-<h1 class="title title-submitted">Write Tests for Your Data Science Project</h1>
-<div class="submitted">
+<h1 class="title mb--xxs">Write Tests for Your Data Science Project</h1>
+<div class="submitted meta">
 <time class="created-date" datetime="2020-07-03T13:09:00&#43;02:00">3 July, 2020</time>
+
 </div>
 </header>
-<div class="content">
+
 <p>I never seem to have got into the habit of writing tests as I code. That&rsquo;s bad, I know.</p>
 <p>But there are so many excuses that prevents it, &ldquo;oh this is just an exploratory thing&rdquo;, or &ldquo;Karen and Chad really needs the report/tool soon, no time for test&rdquo;, or whatever else that might get in your way. Plus there&rsquo;s a tendency to just use the million open-source projects out-of-the box, and expect them to do what you think they do.</p>
 <p>Sometimes they don&rsquo;t work they way you had hoped, and you end up digging thought lines and lines of code hoping to find out what went wrong where. And if you&rsquo;re working with particularly large datasets, just the IO along can slow you down very considerably. Or worse yet, you merrily hand over a &ldquo;finished product&rdquo; without even realising the bugs inside &ndash; because no tests told you so! I can personally attest to this, especially those deadline-rushed projects.</p>
@@ -101,24 +117,23 @@ The default behaviour of <a href="https://scikit-learn.org/stable/modules/genera
 <p>Just write some tests, it&rsquo;s better late than never.</p>
 
 
-</div>
 </article>
 </main>
 
 
 <aside class="sidebar layout__second-sidebar">
-<section>
-<h4 class="menu"><a href="/reading-notes/">Reading notes</a></h4>
-<ul class="menu">
+<nav class="menu">
+<p class="title"><strong><a href="/reading-notes/">Reading Notes</a></strong></p>
+<ul>
 <li><a href="/reading-notes/2021-10-14-the_day_lasts_more_than_a_hundred_years/">The Day Lasts More than a Hundred Years</a></li>
 <li><a href="/reading-notes/2021-04-10-liu_cixin/">Works by Liu Cixin</a></li>
 <li><a href="/reading-notes/2021-03-12-slaughterhouse-five/">Slaughterhouse-Five</a></li>
 <li><a href="/reading-notes/2021-02-07-ham_on_rye/">Ham on Rye</a></li>
 </ul>
-</section>
-<section>
-<h4 class="menu"><a href="/sketchbook/">Sketchbooks</a></h4>
-<ul class="menu">
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/sketchbook/">Sketchbooks</a></strong></p>
+<ul>
 <li><a href="/sketchbook/2021-03-29_totoros/">Totoros</a></li>
 <li><a href="/sketchbook/2020-10-25_autumn2/">Autumn 2020 II</a></li>
 <li><a href="/sketchbook/2020-10-25_autumn1/">Autumn 2020 I</a></li>
@@ -134,47 +149,33 @@ The default behaviour of <a href="https://scikit-learn.org/stable/modules/genera
 <li><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></li>
 <li><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></li>
 </ul>
-</section>
-<section>
-<h4 class="menu"><a href="/blogs/" class="active" aria-current="page">Blogs</a></h4>
-<ul class="menu">
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/blogs/" aria-current="page">Blogs</a></strong></p>
+<ul>
 <li><a href="/blogs/2021-02-02lessons_learned_rc2020/">Lessons Learned from RC2020</a></li>
 <li><a href="/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">Rough Estimate: When to go back to school?</a></li>
-<li><a href="/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
-<li><a href="/blogs/2020-07-03-write_tests/" class="active" aria-current="page">Write Tests for Your Data Science Project</a></li>
-<li><a href="/blogs/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
-<li><a href="/blogs/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
-<li><a href="/blogs/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
+<li><a href="/blogs/2020-07-03-write_tests/" aria-current="page">Write Tests for Your Data Science Project</a></li>
 <li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
 </ul>
-</section>
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/quick-fixes/">Quick Fixes</a></strong></p>
+<ul>
+<li><a href="/quick-fixes/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
+<li><a href="/quick-fixes/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
+<li><a href="/quick-fixes/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
+<li><a href="/quick-fixes/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
+</ul>
+</nav>
 </aside>
-<footer class="footer layout__footer">
-<p>This site is licensed under a <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> License.</p>
+<footer class="footer layout__footer mt--l">
+<p><span>© yun&#39;s attic</span></p>
 
 <p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
 </footer>
 
-</div>
-<div class="mobile-nav" dir="ltr">
-  <div class="mobile-nav__cover"></div>
-  <a href="#navigation" class="mobile-nav__toggle" aria-haspopup="true" role="button">Menu</a>
-  <div class="mobile-nav__sheet">
-    <div class="mobile-nav__region">
-    
-    </div>
-    <nav class="mobile-nav__main-menu">
-    <h2 class="visually-hidden">Main menu</h2>
-    <ul class="mobile-nav__navbar">
-    <li><a href="/">Home</a></li>
-    <li><a href="/recipes/">Recipes</a></li>
-    <li><a href="/about/">About</a></li>
-    <li><a href="/reading-notes/">Reading notes</a></li>
-    <li><a href="/sketchbook/">Sketchbooks</a></li>
-    <li><a href="/blogs/" class="active" aria-current="page">Blogs</a></li>
-    </ul>
-    </nav>
-  </div>
 </div>
 </body>
 </html>

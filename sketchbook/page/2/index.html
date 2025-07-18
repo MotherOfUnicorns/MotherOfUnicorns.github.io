@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <title>Sketchbooks – yun&#39;s attic</title>
-<link rel="alternate" type="application/rss+xml" title="RSS" href="https://yunli.nl/sketchbook/index.xml">
-<meta name="description" content="">
+<link rel="alternate" type="application/rss+xml" title="rss" href="https://yunli.nl/sketchbook/index.xml">
+
 <meta name="created" content="2021-03-29T18:01:56+0200">
 <meta name="modified" content="2021-03-29T18:01:56+0200">
 
@@ -15,20 +15,21 @@
 <meta property="og:url" content="https://yunli.nl/sketchbook/">
 <meta property="og:type" content="website">
 
-<meta name="generator" content="Hugo 0.89.4" />
+<meta name="generator" content="Hugo 0.148.1">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
 
 <link rel="canonical" href="https://yunli.nl/sketchbook/">
+
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-<link rel="stylesheet" href="/css/mobile.2ab74aa64785dcab8114959e76ca140cf76207cd85989bc6d4fc3b12f734a09e.css" media="screen">
-<link rel="stylesheet" href="/css/styles.203e732c5f61011e9025d06034f611850df429e48ce7532103b43b9a18e86dd4.css">
-<link rel="stylesheet" href="/css/print.27fc184f8670f41a2690985390779e7b20335a8fadff8fa015cf9417ffe50c36.css" media="print">
+<link rel="stylesheet" href="/css/styles.112a16990270a2bb36fb086cb740da909617b1040cbac6f8170f68aa414328a1.css">
+<link rel="stylesheet" href="/css/mobilemenu.dbbf7de443967fe1d83dce47fb19895d79710b23ccd02b84f54d4d39c37e3d2d.css" media="screen">
+<link rel="stylesheet" href="/css/print.1912ba13950e7434fb50dd14d3951bc7f57bb0c16b4f204158b72f0b3844f7a1.css" media="print">
 
 <script type="application/ld+json">
-  {
+{
     "@context": "https://schema.org",
     "@type": "WebPage",
     "url" : "https://yunli.nl/sketchbook/",
@@ -46,20 +47,25 @@
   }
 </script>
 
-<script src="/js/script-early.min.3b0e641814c87f6a1d6ffa5e7d597f29faa8ce11482541e8801dc34013817c91.js"></script>
-<script defer src="/js/lib/jquery.slim.min.e3e5f35d586c0e6a9a9d7187687be087580c40a5f8d0e52f0c4053bbc25c98db.js"></script>
-<script defer src="/js/lib/umbrella.min.6e17830ccdded0a13b96d6993865b58202bc2ee750e5892a51858ab048b2bebb.js"></script>
-<script defer src="/js/mobile.min.abb9438113cb72181ecda30b9375cc0771c7ce2e7354414a7c1296b45cf47135.js"></script>
-<script defer src="/js/script.min.a71d161caff0970fa29a345da3bd9b444f629eccf1e4922585879b44f8f30160.js"></script>
+<script src="/js/script-early.2d6255816e36e34bd1948dc5c26ede35687a256c4e2e516e0cd75f383a510c6a.js"></script>
 
-<script async defer src="https://nocookieanalytics.com/latest.js"></script>
+<script defer src="/libs/jquery.slim.min.9261efb3407e3a9096e4654750d8eff6b3a663422f48845c7fbcc65034c340cf.js"></script>
+<script defer src="/js/mobilemenu.7ce1f75fd1d49cd683a008352ad9001f800349629be01d531a19c02b5a84817b.js"></script>
+<script defer src="/js/script.f2979a93a325fecf9605263bd141398a311c8e23388ed7dcff74f92f7e632866.js"></script>
+
+
+
+
+
 
 </head>
 
 <body class="list-page">
 <div class="page layout__page layout__sidebar-second">
 <header class="header layout__header">
-<a href="/" title="Home" rel="home" class="header__logo"><img src="/images/logo.png" alt="Home" class="header__logo-image"></a>
+<a href="/" title="Home" rel="home" class="header__logo">
+<img src="/images/logo.png" alt="Home" class="header__logo-image">
+</a>
 <h1 class="header__site-name">
 <a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
 </h1>
@@ -67,93 +73,103 @@
 </div>
 </header>
 
-<nav class="main-menu layout__navigation">
-<h2 class="visually-hidden">Main menu</h2>
-<ul class="navbar">
-<li><a href="/">Home</a></li>
-<li><a href="/recipes/">Recipes</a></li>
-<li><a href="/about/">About</a></li>
-<li><a href="/reading-notes/">Reading notes</a></li>
-<li><a href="/sketchbook/" class="active" aria-current="page">Sketchbooks</a></li>
-<li><a href="/blogs/">Blogs</a></li>
+<nav class="main-menu mx--xs layout__navigation" aria-label="Main menu">
+<ul class="flex-inline mx--0">
 </ul>
 </nav>
-
-
+<div class="mobile-nav" dir="ltr" hidden>
+  <div class="mobile-nav__cover"></div>
+  <button class="mobile-nav__toggle button" aria-expanded="false" aria-controls="sheet">
+    Menu
+    <svg class="mobile-nav__hamburger" viewBox="0 0 100 100" focusable="false" aria-hidden="true">
+      <rect width="80" height="12" x="10" y="20" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="45" rx="5"></rect>
+      <rect width="80" height="12" x="10" y="70" rx="5"></rect>
+    </svg>
+  </button>
+  <div class="mobile-nav__sheet link-inverted link-nav" id="sheet" aria-hidden="true">
+    <div class="mobile-nav__region"></div>
+    <nav class="mobile-nav__main-menu" aria-label="Main menu">
+    <ul class="mobile-nav__navbar">
+    </ul>
+    </nav>
+  </div>
+</div>
 <main class="main layout__main">
+<header>
 <h1 class="title">Sketchbooks</h1>
-<article class="section-sketchbook list-view">
+</header>
+
+
+
+<article class="list-view list-view--sketchbook">
 <header>
-<h2 class="title title-submitted"><a href="/sketchbook/2020-06-02-portrait/">Random Portrait</a></h2>
-<div class="submitted">
+<h2 class="title mt--s mb--xxs"><a href="/sketchbook/2020-06-02-portrait/">Random Portrait</a></h2>
+<div class="submitted meta">
 <time class="created-date" datetime="2020-06-02T22:15:14&#43;02:00">2 June, 2020</time>
+
 </div>
 
 </header>
-<div class="content">
 <p><img src="/sketchbook/2020-06-02-portrait.jpeg" alt="portrait" title="portrait"></p>
-</div>
 </article>
 
-<article class="section-sketchbook list-view">
+<article class="list-view list-view--sketchbook">
 <header>
-<h2 class="title title-submitted"><a href="/sketchbook/2020-05-30-bay_leaf/">Bay Leaf</a></h2>
-<div class="submitted">
+<h2 class="title mt--s mb--xxs"><a href="/sketchbook/2020-05-30-bay_leaf/">Bay Leaf</a></h2>
+<div class="submitted meta">
 <time class="created-date" datetime="2020-05-30T22:12:14&#43;02:00">30 May, 2020</time>
+
 </div>
 
 </header>
-<div class="content">
 <p><img src="/sketchbook/2020-05-30-bay_leaf.jpeg" alt="bay leaf" title="bay leaf"></p>
-</div>
 </article>
 
-<article class="section-sketchbook list-view">
+<article class="list-view list-view--sketchbook">
 <header>
-<h2 class="title title-submitted"><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></h2>
-<div class="submitted">
+<h2 class="title mt--s mb--xxs"><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></h2>
+<div class="submitted meta">
 <time class="created-date" datetime="2020-05-24T20:12:14&#43;02:00">24 May, 2020</time>
+
 </div>
 
 </header>
-<div class="content">
 <p><img src="/sketchbook/2020-05-24-sunflower.jpeg" alt="sunflower" title="sunflower"></p>
-</div>
 </article>
 
-<article class="section-sketchbook list-view">
+<article class="list-view list-view--sketchbook">
 <header>
-<h2 class="title title-submitted"><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></h2>
-<div class="submitted">
+<h2 class="title mt--s mb--xxs"><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></h2>
+<div class="submitted meta">
 <time class="created-date" datetime="2020-05-10T21:12:14&#43;02:00">10 May, 2020</time>
+
 </div>
 
 </header>
-<div class="content">
 <p><img src="/sketchbook/2020-05-10-parakeet.jpg" alt="parakeet" title="parakeet"></p>
-</div>
 </article>
 
 <nav class="pager">
-<a href="/sketchbook/" rel="prev" class="pager-item pager-prev">Prev</a>
+<a href="/sketchbook/" rel="prev" class="pager__item pager__item--prev"><span aria-hidden="true">« </span>Previous</a>
 </nav>
 
 </main>
 
 
 <aside class="sidebar layout__second-sidebar">
-<section>
-<h4 class="menu"><a href="/reading-notes/">Reading notes</a></h4>
-<ul class="menu">
+<nav class="menu">
+<p class="title"><strong><a href="/reading-notes/">Reading Notes</a></strong></p>
+<ul>
 <li><a href="/reading-notes/2021-10-14-the_day_lasts_more_than_a_hundred_years/">The Day Lasts More than a Hundred Years</a></li>
 <li><a href="/reading-notes/2021-04-10-liu_cixin/">Works by Liu Cixin</a></li>
 <li><a href="/reading-notes/2021-03-12-slaughterhouse-five/">Slaughterhouse-Five</a></li>
 <li><a href="/reading-notes/2021-02-07-ham_on_rye/">Ham on Rye</a></li>
 </ul>
-</section>
-<section>
-<h4 class="menu"><a href="/sketchbook/" class="active" aria-current="page">Sketchbooks</a></h4>
-<ul class="menu">
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/sketchbook/" aria-current="page">Sketchbooks</a></strong></p>
+<ul>
 <li><a href="/sketchbook/2021-03-29_totoros/">Totoros</a></li>
 <li><a href="/sketchbook/2020-10-25_autumn2/">Autumn 2020 II</a></li>
 <li><a href="/sketchbook/2020-10-25_autumn1/">Autumn 2020 I</a></li>
@@ -169,48 +185,34 @@
 <li><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></li>
 <li><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></li>
 </ul>
-</section>
-<section>
-<h4 class="menu"><a href="/blogs/">Blogs</a></h4>
-<ul class="menu">
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/blogs/">Blogs</a></strong></p>
+<ul>
 <li><a href="/blogs/2021-02-02lessons_learned_rc2020/">Lessons Learned from RC2020</a></li>
 <li><a href="/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">Rough Estimate: When to go back to school?</a></li>
-<li><a href="/blogs/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
 <li><a href="/blogs/2020-07-03-write_tests/">Write Tests for Your Data Science Project</a></li>
-<li><a href="/blogs/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
-<li><a href="/blogs/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
-<li><a href="/blogs/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
 <li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
 </ul>
-</section>
+</nav>
+<nav class="menu">
+<p class="title"><strong><a href="/quick-fixes/">Quick Fixes</a></strong></p>
+<ul>
+<li><a href="/quick-fixes/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
+<li><a href="/quick-fixes/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
+<li><a href="/quick-fixes/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
+<li><a href="/quick-fixes/2020-05-28-schema_name/">Schema Names: SQLAlchemy and Alembic</a></li>
+</ul>
+</nav>
 </aside>
-<footer class="footer layout__footer">
-<p>Subscribe to section sketchbook: <a rel="alternate" type="application/rss&#43;xml" href="https://yunli.nl/sketchbook/index.xml">RSS</a></p>
-<p>This site is licensed under a <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> License.</p>
+<footer class="footer layout__footer mt--l">
+<p>Follow sketchbook: <a rel="alternate" type="application/rss&#43;xml" href="https://yunli.nl/sketchbook/index.xml">rss</a></p>
+<p><span>© yun&#39;s attic</span></p>
 
 <p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
+
 </footer>
 
-</div>
-<div class="mobile-nav" dir="ltr">
-  <div class="mobile-nav__cover"></div>
-  <a href="#navigation" class="mobile-nav__toggle" aria-haspopup="true" role="button">Menu</a>
-  <div class="mobile-nav__sheet">
-    <div class="mobile-nav__region">
-    
-    </div>
-    <nav class="mobile-nav__main-menu">
-    <h2 class="visually-hidden">Main menu</h2>
-    <ul class="mobile-nav__navbar">
-    <li><a href="/">Home</a></li>
-    <li><a href="/recipes/">Recipes</a></li>
-    <li><a href="/about/">About</a></li>
-    <li><a href="/reading-notes/">Reading notes</a></li>
-    <li><a href="/sketchbook/" class="active" aria-current="page">Sketchbooks</a></li>
-    <li><a href="/blogs/">Blogs</a></li>
-    </ul>
-    </nav>
-  </div>
 </div>
 </body>
 </html>

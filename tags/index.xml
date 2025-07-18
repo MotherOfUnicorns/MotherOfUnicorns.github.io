@@ -4,9 +4,8 @@
     <title>Tags on yun&#39;s attic</title>
     <link>https://yunli.nl/tags/</link>
     <description>Recent content in Tags on yun&#39;s attic</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="https://yunli.nl/tags/index.xml" rel="self" type="application/rss+xml" />
-    
+      <atom:link href="https://yunli.nl/tags/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
