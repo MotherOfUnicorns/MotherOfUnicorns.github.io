@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="nojs" lang="en-us" dir="ltr">
+<html class="nojs" lang="en-GB" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
@@ -7,13 +7,13 @@
 
 <meta name="created" content="2020-05-28T11:54:19+0200">
 <meta name="modified" content="2020-05-28T11:54:19+0200">
-
+<meta name="author" content="yun li">
 <meta name="contact" content="liyun@gmail.com">
 <meta property="og:site_name" content="yun&#39;s attic">
 <meta property="og:title" content="Schema Names: SQLAlchemy and Alembic">
 <meta property="og:url" content="https://yunli.nl/quick-fixes/2020-05-28-schema_name/">
 <meta property="og:type" content="article">
-
+<meta property="og:image" content="https://yunli.nl/images/logo.png">
 <meta name="generator" content="Hugo 0.148.1">
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
@@ -36,6 +36,11 @@
     "dateModified": "2020-05-28T11:54:19+02:00",
     "url" : "https://yunli.nl/quick-fixes/2020-05-28-schema_name/",
     
+    "image" : "https://yunli.nl/images/logo.png",
+    "author": {
+      "@type": "Person",
+      "name": "yun li"
+    },
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https://yunli.nl/"
@@ -43,6 +48,10 @@
     "publisher": {
       "@type": "Organization",
       "name": "yun's attic",
+      "logo" : {
+        "@type": "ImageObject",
+        "url": "https://yunli.nl/images/logo.png"
+      },
       "url": "https://yunli.nl/"
     }
   }
@@ -62,10 +71,10 @@
 </head>
 
 <body class="single-page">
-<div class="page layout__page layout__sidebar-second">
+<div class="page layout__page">
 <header class="header layout__header">
 <a href="/" title="Home" rel="home" class="header__logo">
-<img src="/images/logo.png" alt="Home" class="header__logo-image">
+<img src="/images/logo.png" width="64" height="64" alt="Home" class="header__logo-image">
 </a>
 <h1 class="header__site-name">
 <a href="/" title="Home" class="header__site-link" rel="home"><span>yun&#39;s attic</span></a>
@@ -101,7 +110,7 @@
 <header>
 <h1 class="title mb--xxs">Schema Names: SQLAlchemy and Alembic</h1>
 <div class="submitted meta">
-<time class="created-date" datetime="2020-05-28T11:54:19&#43;02:00">28 May, 2020</time>
+<span class="author" itemprop="author">yun li</span> - <time class="created-date" datetime="2020-05-28T11:54:19&#43;02:00">28 May, 2020</time>
 
 </div>
 </header>
@@ -110,44 +119,44 @@
 <p>The next step would be to write my own Python API to query data from the database. The easy way for me would be to stick a bunch of SQL queries in some python functions, but why do that when you can make life more complicated! I&rsquo;ve been wanting to learn about <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a>, and decided this would be my chance to try it out with SQLAlchemy.</p>
 <h2 id="foreign-keys">foreign keys</h2>
 <p>I first created these models:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy <span style="color:#f92672">import</span> Column, ForeignKey
-</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.dialects.postgresql <span style="color:#f92672">import</span> DOUBLE_PRECISION, TEXT, TIMESTAMP
-</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.ext.declarative <span style="color:#f92672">import</span> declarative_base
-</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sqlalchemy.orm <span style="color:#f92672">import</span> relationship
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy</span> <span style="color:#cf222e">import</span> Column<span style="color:#1f2328">,</span> ForeignKey
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.dialects.postgresql</span> <span style="color:#cf222e">import</span> DOUBLE_PRECISION<span style="color:#1f2328">,</span> TEXT<span style="color:#1f2328">,</span> TIMESTAMP
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.ext.declarative</span> <span style="color:#cf222e">import</span> declarative_base
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.orm</span> <span style="color:#cf222e">import</span> relationship
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>Base <span style="color:#f92672">=</span> declarative_base()
+</span></span><span style="display:flex;"><span>Base <span style="color:#0550ae">=</span> declarative_base<span style="color:#1f2328">()</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ModelMixin</span>:
-</span></span><span style="display:flex;"><span>    __table_args__ <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;schema&#34;</span>: <span style="color:#e6db74">&#34;alphavantage&#34;</span>}
-</span></span><span style="display:flex;"><span>    created_at <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>))
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">class</span> <span style="color:#1f2328">ModelMixin</span><span style="color:#1f2328">:</span>
+</span></span><span style="display:flex;"><span>    __table_args__ <span style="color:#0550ae">=</span> <span style="color:#1f2328">{</span><span style="color:#0a3069">&#34;schema&#34;</span><span style="color:#1f2328">:</span> <span style="color:#0a3069">&#34;alphavantage&#34;</span><span style="color:#1f2328">}</span>
+</span></span><span style="display:flex;"><span>    created_at <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>TIMESTAMP<span style="color:#1f2328">(</span>timezone<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span><span style="color:#1f2328">))</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Currency</span>(Base, ModelMixin):
-</span></span><span style="display:flex;"><span>    __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;currencies&#34;</span>
-</span></span><span style="display:flex;"><span>    currency <span style="color:#f92672">=</span> Column(TEXT, primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">class</span> <span style="color:#1f2328">Currency</span><span style="color:#1f2328">(</span>Base<span style="color:#1f2328">,</span> ModelMixin<span style="color:#1f2328">):</span>
+</span></span><span style="display:flex;"><span>    __tablename__ <span style="color:#0550ae">=</span> <span style="color:#0a3069">&#34;currencies&#34;</span>
+</span></span><span style="display:flex;"><span>    currency <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>TEXT<span style="color:#1f2328">,</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span><span style="color:#1f2328">)</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FxPrice</span>(Base, ModelMixin):
-</span></span><span style="display:flex;"><span>    __tablename__ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;fx&#34;</span>
-</span></span><span style="display:flex;"><span>    ts <span style="color:#f92672">=</span> Column(TIMESTAMP(timezone<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
-</span></span><span style="display:flex;"><span>    currency_from <span style="color:#f92672">=</span> Column(
-</span></span><span style="display:flex;"><span>        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
-</span></span><span style="display:flex;"><span>    )
-</span></span><span style="display:flex;"><span>    currency_to <span style="color:#f92672">=</span> Column(
-</span></span><span style="display:flex;"><span>        TEXT, ForeignKey(<span style="color:#e6db74">&#34;currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
-</span></span><span style="display:flex;"><span>    )
-</span></span><span style="display:flex;"><span>    price <span style="color:#f92672">=</span> Column(DOUBLE_PRECISION)
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">class</span> <span style="color:#1f2328">FxPrice</span><span style="color:#1f2328">(</span>Base<span style="color:#1f2328">,</span> ModelMixin<span style="color:#1f2328">):</span>
+</span></span><span style="display:flex;"><span>    __tablename__ <span style="color:#0550ae">=</span> <span style="color:#0a3069">&#34;fx&#34;</span>
+</span></span><span style="display:flex;"><span>    ts <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>TIMESTAMP<span style="color:#1f2328">(</span>timezone<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span><span style="color:#1f2328">),</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span><span style="color:#1f2328">)</span>
+</span></span><span style="display:flex;"><span>    currency_from <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>
+</span></span><span style="display:flex;"><span>        TEXT<span style="color:#1f2328">,</span> ForeignKey<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;currencies.currency&#34;</span><span style="color:#1f2328">),</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
+</span></span><span style="display:flex;"><span>    currency_to <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>
+</span></span><span style="display:flex;"><span>        TEXT<span style="color:#1f2328">,</span> ForeignKey<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;currencies.currency&#34;</span><span style="color:#1f2328">),</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
+</span></span><span style="display:flex;"><span>    price <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>DOUBLE_PRECISION<span style="color:#1f2328">)</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    _currency_from <span style="color:#f92672">=</span> relationship(<span style="color:#e6db74">&#34;Currency&#34;</span>, foreign_keys<span style="color:#f92672">=</span>[currency_from])
-</span></span><span style="display:flex;"><span>    _currency_to <span style="color:#f92672">=</span> relationship(<span style="color:#e6db74">&#34;Currency&#34;</span>, foreign_keys<span style="color:#f92672">=</span>[currency_to])
+</span></span><span style="display:flex;"><span>    _currency_from <span style="color:#0550ae">=</span> relationship<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;Currency&#34;</span><span style="color:#1f2328">,</span> foreign_keys<span style="color:#0550ae">=</span><span style="color:#1f2328">[</span>currency_from<span style="color:#1f2328">])</span>
+</span></span><span style="display:flex;"><span>    _currency_to <span style="color:#0550ae">=</span> relationship<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;Currency&#34;</span><span style="color:#1f2328">,</span> foreign_keys<span style="color:#0550ae">=</span><span style="color:#1f2328">[</span>currency_to<span style="color:#1f2328">])</span>
 </span></span></code></pre></div><p>With an existing database, my goal is to reproduce the tables with a SQLAlchemy model, so I can interact with the database through this bit of Python code.</p>
 <p>But it didn&rsquo;t work, and kept producing this error:</p>
 <pre tabindex="0"><code>sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column &#39;fx.currency_from&#39; could not find table &#39;currencies&#39; with which to generate a foreign key to target column &#39;currency&#39;
 </code></pre><p>After much digging, I found this is because the tables are not in the default <code>public</code> schema, and the solution is to specify schema name while declaring the columns with foreign keys:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    currency_from <span style="color:#f92672">=</span> Column(
-</span></span><span style="display:flex;"><span>        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
-</span></span><span style="display:flex;"><span>    )
-</span></span><span style="display:flex;"><span>    currency_to <span style="color:#f92672">=</span> Column(
-</span></span><span style="display:flex;"><span>        TEXT, ForeignKey(<span style="color:#e6db74">&#34;alphavantage.currencies.currency&#34;</span>), primary_key<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
-</span></span><span style="display:flex;"><span>    )
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    currency_from <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>
+</span></span><span style="display:flex;"><span>        TEXT<span style="color:#1f2328">,</span> ForeignKey<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;alphavantage.currencies.currency&#34;</span><span style="color:#1f2328">),</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
+</span></span><span style="display:flex;"><span>    currency_to <span style="color:#0550ae">=</span> Column<span style="color:#1f2328">(</span>
+</span></span><span style="display:flex;"><span>        TEXT<span style="color:#1f2328">,</span> ForeignKey<span style="color:#1f2328">(</span><span style="color:#0a3069">&#34;alphavantage.currencies.currency&#34;</span><span style="color:#1f2328">),</span> primary_key<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
 </span></span></code></pre></div><h2 id="alembic">alembic</h2>
 <p><a href="https://alembic.sqlalchemy.org/en/latest/">Alembic</a> is a tool for helping with database migrations. It helps tie together your SQLAlchemy models with tables in your database, so that any change you make in your ORM model (e.g. add a column, introduce a new table, etc) will be automatically reflected in your databse.</p>
 <p>It was quite easy to set up, but when I ran</p>
@@ -156,15 +165,15 @@ alembic upgrade head --sql
 </code></pre><p>to try it out, it ended up trying to create two new tables in my database <code>public.&quot;alphavantage.currencies&quot;</code> and <code>public.&quot;alphavantage.fx&quot;</code>. The expected behaviour is to do nothing, because those two tables already exist in my database.</p>
 <p>Apparenly, by default, alembic only discovers tables in the default schema. In this case the tables are in a different <code>alphavantage</code> schema, and that caused some confusion.</p>
 <p>To change its default behaviour, locate the <code>env.py</code> file in <code>./alembic</code>, and add this line</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>include_schemas<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>include_schemas<span style="color:#0550ae">=</span><span style="color:#cf222e">True</span>
 </span></span></code></pre></div><p>in the bit about</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>context<span style="color:#f92672">.</span>configure()
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>context<span style="color:#0550ae">.</span>configure<span style="color:#1f2328">()</span>
 </span></span></code></pre></div><p>of both of these two functions</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_offline</span>():
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#cf222e">def</span> <span style="color:#6639ba">run_migrations_offline</span><span style="color:#1f2328">():</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">...</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">run_migrations_online</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#cf222e">def</span> <span style="color:#6639ba">run_migrations_online</span><span style="color:#1f2328">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">...</span>
 </span></span></code></pre></div><h2 id="conclusion">conclusion</h2>
 <p>Maybe check your schema names when SQLAlchemy can&rsquo;t seem find a table that actually exists!</p>
 
@@ -173,56 +182,8 @@ alembic upgrade head --sql
 </main>
 
 
-<aside class="sidebar layout__second-sidebar">
-<nav class="menu">
-<p class="title"><strong><a href="/reading-notes/">Reading Notes</a></strong></p>
-<ul>
-<li><a href="/reading-notes/2021-10-14-the_day_lasts_more_than_a_hundred_years/">The Day Lasts More than a Hundred Years</a></li>
-<li><a href="/reading-notes/2021-04-10-liu_cixin/">Works by Liu Cixin</a></li>
-<li><a href="/reading-notes/2021-03-12-slaughterhouse-five/">Slaughterhouse-Five</a></li>
-<li><a href="/reading-notes/2021-02-07-ham_on_rye/">Ham on Rye</a></li>
-</ul>
-</nav>
-<nav class="menu">
-<p class="title"><strong><a href="/sketchbook/">Sketchbooks</a></strong></p>
-<ul>
-<li><a href="/sketchbook/2021-03-29_totoros/">Totoros</a></li>
-<li><a href="/sketchbook/2020-10-25_autumn2/">Autumn 2020 II</a></li>
-<li><a href="/sketchbook/2020-10-25_autumn1/">Autumn 2020 I</a></li>
-<li><a href="/sketchbook/2020-09-10_dissociate2/">Dissociate II</a></li>
-<li><a href="/sketchbook/2020-08-23_dissociate1/">Dissociate I</a></li>
-<li><a href="/sketchbook/2020-08-08_portrait/">Another Random Portrait</a></li>
-<li><a href="/sketchbook/2020-08-07_mauve/">Mauve</a></li>
-<li><a href="/sketchbook/2020-08-06_wine/">Wine</a></li>
-<li><a href="/sketchbook/2020-07-24_value_study/">Value Study</a></li>
-<li><a href="/sketchbook/2020-07-02_assholes/">Peaches</a></li>
-<li><a href="/sketchbook/2020-06-02-portrait/">Random Portrait</a></li>
-<li><a href="/sketchbook/2020-05-30-bay_leaf/">Bay Leaf</a></li>
-<li><a href="/sketchbook/2020-05-24-sunflower/">Sunflower</a></li>
-<li><a href="/sketchbook/2020-05-10-parakeet/">Parakeet</a></li>
-</ul>
-</nav>
-<nav class="menu">
-<p class="title"><strong><a href="/blogs/">Blogs</a></strong></p>
-<ul>
-<li><a href="/blogs/2021-02-02lessons_learned_rc2020/">Lessons Learned from RC2020</a></li>
-<li><a href="/blogs/2020-09-26-rough_estimate_when_to_go_to_school/">Rough Estimate: When to go back to school?</a></li>
-<li><a href="/blogs/2020-07-03-write_tests/">Write Tests for Your Data Science Project</a></li>
-<li><a href="/blogs/2020-04-23-first_post/">My First Post</a></li>
-</ul>
-</nav>
-<nav class="menu">
-<p class="title"><strong><a href="/quick-fixes/" aria-current="page">Quick Fixes</a></strong></p>
-<ul>
-<li><a href="/quick-fixes/2020-08-17_waking_up_with_rtcwake_and_crontab/">Waking Up with rtcwake and crontab</a></li>
-<li><a href="/quick-fixes/2020-06-09-timezone_in_python/">Time Zone in Python - Tip of the Iceberg</a></li>
-<li><a href="/quick-fixes/2020-05-02-lateral_join_orm/">Lateral Join with SQLAlchemy</a></li>
-<li><a href="/quick-fixes/2020-05-28-schema_name/" aria-current="page">Schema Names: SQLAlchemy and Alembic</a></li>
-</ul>
-</nav>
-</aside>
 <footer class="footer layout__footer mt--l">
-<p><span>© yun&#39;s attic</span></p>
+<p>This site is licensed under a <a href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> License.</p>
 
 <p>Powered by <a href="https://gohugo.io/">Hugo</a> and the <a href="https://github.com/frjo/hugo-theme-zen">Zen theme</a>.</p>
 

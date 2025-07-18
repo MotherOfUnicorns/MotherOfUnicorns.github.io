@@ -1,0 +1,131 @@
+
+{
+    "version": "https://jsonfeed.org/version/1.1",
+    "title": "Sketchbook on yun's attic",
+    "description": "Recent content in Sketchbook on yun's attic",
+    "home_page_url": "https://yunli.nl/",
+    "feed_url": "https://yunli.nl/sketchbook/index.json",
+    "language": "en-GB",
+    "icon": "https://yunli.nl/images/logo.png",
+    "favicon": "https://yunli.nl/images/logo.png",
+    "authors": [
+        {
+            "name": "yun li",
+            "url": "https://yunli.nl"
+        }
+    ],
+    "items": [
+        {
+            "title": "Totoros",
+            "date_published": "2021-03-29T18:01:56+02:00",
+            "date_modified": "2021-03-29T18:01:56+02:00",
+            "id": "https://yunli.nl/sketchbook/2021-03-29_totoros/",
+            "url": "https://yunli.nl/sketchbook/2021-03-29_totoros/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2021-03-29_totoros.jpg\" alt=\"Totoros\" title=\"Totoros\"\u003e\u003c/p\u003e\n\u003cp\u003eTotoros, gouache\u003c/p\u003e"
+        },
+        {
+            "title": "Autumn 2020 II",
+            "date_published": "2020-10-25T22:01:56+02:00",
+            "date_modified": "2020-10-25T22:01:56+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-10-25_autumn2/",
+            "url": "https://yunli.nl/sketchbook/2020-10-25_autumn2/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-10-25_autumn2.png\" alt=\"Autumn 2020 II\" title=\"Autumn 2020 II\"\u003e\u003c/p\u003e\n\u003cp\u003eAutumn 2020 II, watercolour\u003c/p\u003e\n\u003cp\u003eAutumn 2020 is still an autumn.\u003c/p\u003e"
+        },
+        {
+            "title": "Autumn 2020 I",
+            "date_published": "2020-10-25T22:01:55+02:00",
+            "date_modified": "2020-10-25T22:01:55+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-10-25_autumn1/",
+            "url": "https://yunli.nl/sketchbook/2020-10-25_autumn1/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-10-25_autumn1.png\" alt=\"Autumn 2020 I\" title=\"Autumn 2020 I\"\u003e\u003c/p\u003e\n\u003cp\u003eAutumn 2020 I, watercolour\u003c/p\u003e\n\u003cp\u003eAutumn 2020 is still an autumn.\u003c/p\u003e"
+        },
+        {
+            "title": "Dissociate II",
+            "date_published": "2020-09-10T23:56:55+02:00",
+            "date_modified": "2020-09-10T23:56:55+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-09-10_dissociate2/",
+            "url": "https://yunli.nl/sketchbook/2020-09-10_dissociate2/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-09-10_dissociate2.jpg\" alt=\"Dissociate II\" title=\"Dissociate II\"\u003e\u003c/p\u003e\n\u003cp\u003eDissociate II, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Dissociate I",
+            "date_published": "2020-08-23T19:56:55+02:00",
+            "date_modified": "2020-08-23T19:56:55+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-08-23_dissociate1/",
+            "url": "https://yunli.nl/sketchbook/2020-08-23_dissociate1/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-08-23_dissociate1.jpg\" alt=\"Dissociate I\" title=\"Dissociate I\"\u003e\u003c/p\u003e\n\u003cp\u003eDissociate I, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Another Random Portrait",
+            "date_published": "2020-08-08T21:56:55+02:00",
+            "date_modified": "2020-08-08T21:56:55+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-08-08_portrait/",
+            "url": "https://yunli.nl/sketchbook/2020-08-08_portrait/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-08-08_portrait.jpg\" alt=\"Another Random Portrait\" title=\"Another Random Portrait\"\u003e\u003c/p\u003e\n\u003cp\u003eAnother Random Portrait, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Mauve",
+            "date_published": "2020-08-07T21:54:05+02:00",
+            "date_modified": "2020-08-07T21:54:05+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-08-07_mauve/",
+            "url": "https://yunli.nl/sketchbook/2020-08-07_mauve/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-08-07_mauve.jpg\" alt=\"Mauve\" title=\"Mauve\"\u003e\u003c/p\u003e\n\u003cp\u003eMauve, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Wine",
+            "date_published": "2020-08-06T22:02:11+02:00",
+            "date_modified": "2020-08-06T22:02:11+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-08-06_wine/",
+            "url": "https://yunli.nl/sketchbook/2020-08-06_wine/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-08-06_wine.jpg\" alt=\"Wine\" title=\"Wine\"\u003e\u003c/p\u003e\n\u003cp\u003eWine, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Value Study",
+            "date_published": "2020-07-24T22:00:05+02:00",
+            "date_modified": "2020-07-24T22:00:05+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-07-24_value_study/",
+            "url": "https://yunli.nl/sketchbook/2020-07-24_value_study/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-07-24_value_study.jpg\" alt=\"Value Study\" title=\"Value Study\"\u003e\u003c/p\u003e\n\u003cp\u003eValue study, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Peaches",
+            "date_published": "2020-07-02T21:45:03+02:00",
+            "date_modified": "2020-07-02T21:45:03+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-07-02_assholes/",
+            "url": "https://yunli.nl/sketchbook/2020-07-02_assholes/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-07-02_peaches.jpg\" alt=\"Peaches\" title=\"Peaches\"\u003e\u003c/p\u003e\n\u003cp\u003ePeaches, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Random Portrait",
+            "date_published": "2020-06-02T22:15:14+02:00",
+            "date_modified": "2020-06-02T22:15:14+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-06-02-portrait/",
+            "url": "https://yunli.nl/sketchbook/2020-06-02-portrait/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-06-02-portrait.jpeg\" alt=\"portrait\" title=\"portrait\"\u003e\u003c/p\u003e\n\u003cp\u003eportrait sketch using an old magazine as reference, graphite pencil\u003c/p\u003e"
+        },
+        {
+            "title": "Bay Leaf",
+            "date_published": "2020-05-30T22:12:14+02:00",
+            "date_modified": "2020-05-30T22:12:14+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-05-30-bay_leaf/",
+            "url": "https://yunli.nl/sketchbook/2020-05-30-bay_leaf/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-05-30-bay_leaf.jpeg\" alt=\"bay leaf\" title=\"bay leaf\"\u003e\u003c/p\u003e\n\u003cp\u003ebay leaf from biryani, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Sunflower",
+            "date_published": "2020-05-24T20:12:14+02:00",
+            "date_modified": "2020-05-24T20:12:14+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-05-24-sunflower/",
+            "url": "https://yunli.nl/sketchbook/2020-05-24-sunflower/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-05-24-sunflower.jpeg\" alt=\"sunflower\" title=\"sunflower\"\u003e\u003c/p\u003e\n\u003cp\u003esunflower, watercolour\u003c/p\u003e"
+        },
+        {
+            "title": "Parakeet",
+            "date_published": "2020-05-10T21:12:14+02:00",
+            "date_modified": "2020-05-10T21:12:14+02:00",
+            "id": "https://yunli.nl/sketchbook/2020-05-10-parakeet/",
+            "url": "https://yunli.nl/sketchbook/2020-05-10-parakeet/",
+            "content_html": "\u003cp\u003e\u003cimg src=\"/sketchbook/2020-05-10-parakeet.jpg\" alt=\"parakeet\" title=\"parakeet\"\u003e\u003c/p\u003e\n\u003cp\u003eparakeet, watercolour\u003c/p\u003e"
+        }
+        ]
+}

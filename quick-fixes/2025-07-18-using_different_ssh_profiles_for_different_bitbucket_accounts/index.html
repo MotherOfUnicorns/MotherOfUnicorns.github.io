@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
-<title>Lateral Join with SQLAlchemy – yun&#39;s attic</title>
+<title>Using Different SSH Profiles for Different Bitbucket Accounts – yun&#39;s attic</title>
 
-<meta name="created" content="2020-06-02T11:54:19+0200">
-<meta name="modified" content="2020-06-02T11:54:19+0200">
+<meta name="created" content="2025-07-18T11:54:19+0300">
+<meta name="modified" content="2025-07-18T11:54:19+0300">
 <meta name="author" content="yun li">
 <meta name="contact" content="liyun@gmail.com">
 <meta property="og:site_name" content="yun&#39;s attic">
-<meta property="og:title" content="Lateral Join with SQLAlchemy">
-<meta property="og:url" content="https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/">
+<meta property="og:title" content="Using Different SSH Profiles for Different Bitbucket Accounts">
+<meta property="og:url" content="https://yunli.nl/quick-fixes/2025-07-18-using_different_ssh_profiles_for_different_bitbucket_accounts/">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://yunli.nl/images/logo.png">
 <meta name="generator" content="Hugo 0.148.1">
@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#ffffff">
 
 
-<link rel="canonical" href="https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/">
+<link rel="canonical" href="https://yunli.nl/quick-fixes/2025-07-18-using_different_ssh_profiles_for_different_bitbucket_accounts/">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -31,10 +31,10 @@
 {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "headline": "Lateral Join with SQLAlchemy",
-    "datePublished": "2020-06-02T11:54:19+02:00",
-    "dateModified": "2020-06-02T11:54:19+02:00",
-    "url" : "https://yunli.nl/quick-fixes/2020-05-02-lateral_join_orm/",
+    "headline": "Using Different SSH Profiles for Different Bitbucket Accounts",
+    "datePublished": "2025-07-18T11:54:19+03:00",
+    "dateModified": "2025-07-18T11:54:19+03:00",
+    "url" : "https://yunli.nl/quick-fixes/2025-07-18-using_different_ssh_profiles_for_different_bitbucket_accounts/",
     
     "image" : "https://yunli.nl/images/logo.png",
     "author": {
@@ -108,13 +108,15 @@
 <main class="main layout__main">
 <article class="single-view single-view--quick-fixes">
 <header>
-<h1 class="title mb--xxs">Lateral Join with SQLAlchemy</h1>
+<h1 class="title mb--xxs">Using Different SSH Profiles for Different Bitbucket Accounts</h1>
 <div class="submitted meta">
-<span class="author" itemprop="author">yun li</span> - <time class="created-date" datetime="2020-06-02T11:54:19&#43;02:00">2 June, 2020</time>
+<span class="author" itemprop="author">yun li</span> - <time class="created-date" datetime="2025-07-18T11:54:19&#43;03:00">18 July, 2025</time>
 
 </div>
 </header>
 
+<p>For various reasons I have multiple Bitbucket accounts with different organisations, and Bitbucket does not let you use the same SSH key for different organisations - probably for a good reason.
+I&rsquo;ve have had to set this up a couple times, and this time I finally decided to jot it down so hopefully I won&rsquo;t have to rack my brain next time.</p>
 <p>When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.</p>
 <p>One way to achieve this is to load all data with Python, and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html">resample</a> or <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html">reindex</a> it with Pandas.</p>
 <p>An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):</p>
