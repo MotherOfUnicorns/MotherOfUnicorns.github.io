@@ -146,7 +146,7 @@ Host bitbucket_org2
     Hostname bitbucket.org
     IdentityFile /home/yun/.ssh/bitbucket_org2_key
     IdentitiesOnly yes
-</code></pre><pre><code>(Not related, but you might need this line in your host config too - `AddressFamily inet` - to make sure it uses IPV4 only - otherwise Bitbucket jut won't let you.)
+</code></pre><pre><code>* (Not related, but you might need this line in your host config too - `AddressFamily inet` - to make sure it uses IPV4 only - otherwise Bitbucket jut won't let you.)
 </code></pre>
 <ol start="3">
 <li>Now test the connection with e.g. <code>ssh -vv bitbucket_org1</code>. If something is wrong, go back and figure it out.</li>
