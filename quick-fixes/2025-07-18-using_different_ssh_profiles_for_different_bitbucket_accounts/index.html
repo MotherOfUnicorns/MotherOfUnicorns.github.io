@@ -129,112 +129,35 @@
 </div>
 </header>
 
-<p>For various reasons I have multiple Bitbucket accounts with different organisations, and Bitbucket does not let you use the same SSH key for different organisations - probably for a good reason.
-I&rsquo;ve have had to set this up a couple times, and this time I finally decided to jot it down so hopefully I won&rsquo;t have to rack my brain next time.</p>
-<p>When handling timeseries data, quite often you may want to resample the data at a different frequency and use it that way.</p>
-<p>One way to achieve this is to load all data with Python, and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.resample.html">resample</a> or <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reindex.html">reindex</a> it with Pandas.</p>
-<p>An alternative is to query directly in SQL by using a pattern like the one below. This allows you to only get the most recent data at each sample point you&rsquo;re interested in. This particular example samples the exchange rate between JPY and USD every two hours (in the actual database, I have some more recent data at 1 min intervals, and the rest at either 5 min or 30 min intervals):</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#cf222e">select</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#cf222e">from</span><span style="color:#fff"> </span>generate_series<span style="color:#1f2328">(</span><span style="color:#0a3069">&#39;2020-01-01&#39;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#39;2020-01-15&#39;</span><span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#0a3069">&#39;2 hour&#39;</span><span style="color:#1f2328">::</span><span style="color:#6639ba">interval</span><span style="color:#1f2328">)</span><span style="color:#fff"> </span>sampled_at<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#cf222e">join</span><span style="color:#fff"> </span><span style="color:#cf222e">lateral</span><span style="color:#fff"> </span><span style="color:#1f2328">(</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">select</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">from</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#fff"> </span>f<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">where</span><span style="color:#fff"> </span>f<span style="color:#1f2328">.</span>ts<span style="color:#fff"> </span><span style="color:#0550ae">&lt;=</span><span style="color:#fff"> </span>sampled_at<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">and</span><span style="color:#fff"> </span>currency_from<span style="color:#fff"> </span><span style="color:#0550ae">=</span><span style="color:#fff"> </span><span style="color:#0a3069">&#39;JPY&#39;</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">and</span><span style="color:#fff"> </span>currency_to<span style="color:#fff"> </span><span style="color:#0550ae">=</span><span style="color:#fff"> </span><span style="color:#0a3069">&#39;USD&#39;</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">order</span><span style="color:#fff"> </span><span style="color:#cf222e">by</span><span style="color:#fff"> </span>f<span style="color:#1f2328">.</span>ts<span style="color:#fff"> </span><span style="color:#cf222e">desc</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">limit</span><span style="color:#fff"> </span><span style="color:#0550ae">1</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#1f2328">)</span><span style="color:#fff"> </span>p<span style="color:#fff"> </span><span style="color:#cf222e">on</span><span style="color:#fff"> </span><span style="color:#cf222e">true</span><span style="color:#fff">
-</span></span></span></code></pre></div><p>Since I&rsquo;m down on the SQLAlchemy ORM road, why not try to write the query there as well!</p>
-<p>I found the SQLAlchemy documentation quite difficult to grapple with at times, and I get the impression that there are many, many different ways to accomplish the same thing.
-At some point I got quite overwhelmed and frustrated after reading page after page of docs that doesn&rsquo;t directly answer the question I have.</p>
-<p>Then I came across this <a href="https://adam-gligor.github.io/2019/11/15/sqlalchemy-subqueries/">blog post</a> by Adam Gligor, which really helped me comb my thoughts and finally decide on how I want to approach it.</p>
-<p>First take care of all the imports:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#cf222e">import</span> <span style="color:#24292e">datetime</span> <span style="color:#cf222e">as</span> <span style="color:#24292e">dt</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy</span> <span style="color:#cf222e">import</span> and_<span style="color:#1f2328">,</span> desc<span style="color:#1f2328">,</span> true
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.orm</span> <span style="color:#cf222e">import</span> aliased<span style="color:#1f2328">,</span> sessionmaker
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.sql</span> <span style="color:#cf222e">import</span> func
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">sqlalchemy.sql.expression</span> <span style="color:#cf222e">import</span> join
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">.constants</span> <span style="color:#cf222e">import</span> DB_ENGINE
-</span></span><span style="display:flex;"><span><span style="color:#cf222e">from</span> <span style="color:#24292e">.models</span> <span style="color:#cf222e">import</span> FxPrice
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>_Session <span style="color:#0550ae">=</span> sessionmaker<span style="color:#1f2328">(</span>bind<span style="color:#0550ae">=</span>DB_ENGINE<span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>session <span style="color:#0550ae">=</span> _Session<span style="color:#1f2328">()</span>
-</span></span></code></pre></div><p>I wrote this subquery to generate timeseries that I want to resample the data on, and aliased it:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>start_ts<span style="color:#1f2328">,</span> end_ts <span style="color:#0550ae">=</span> dt<span style="color:#0550ae">.</span>datetime<span style="color:#1f2328">(</span><span style="color:#0550ae">2020</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">),</span> dt<span style="color:#0550ae">.</span>datetime<span style="color:#1f2328">(</span><span style="color:#0550ae">2020</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">2</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>interval <span style="color:#0550ae">=</span> dt<span style="color:#0550ae">.</span>timedelta<span style="color:#1f2328">(</span>hours<span style="color:#0550ae">=</span><span style="color:#0550ae">2</span><span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>subquery_ts <span style="color:#0550ae">=</span> <span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>    session<span style="color:#0550ae">.</span>query<span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>        func<span style="color:#0550ae">.</span>generate_series<span style="color:#1f2328">(</span>start_ts<span style="color:#1f2328">,</span> end_ts<span style="color:#1f2328">,</span> interval<span style="color:#1f2328">)</span><span style="color:#0550ae">.</span>label<span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>            <span style="color:#0a3069">&#34;sampled_at&#34;</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>subquery<span style="color:#1f2328">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>lateral<span style="color:#1f2328">()</span>
-</span></span><span style="display:flex;"><span><span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>a <span style="color:#0550ae">=</span> aliased<span style="color:#1f2328">(</span>subquery_ts<span style="color:#1f2328">)</span>
-</span></span></code></pre></div><p>The <code>aliased()</code> function does something like this in SQL:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#cf222e">select</span><span style="color:#fff"> </span><span style="color:#0550ae">*</span><span style="color:#fff"> </span><span style="color:#cf222e">from</span><span style="color:#fff"> </span>some_table<span style="color:#fff"> </span><span style="color:#cf222e">as</span><span style="color:#fff"> </span>some_alias<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#1f2328">...</span><span style="color:#fff">
-</span></span></span></code></pre></div><p>It essentially allows you to give a name to some (intermediate or temporary) table, so that you can reference it later, either when joining it with another table, or joining it with itself.</p>
-<p>Then I wrote another subquery to get the most recent price update at each time point I want to sample.
-Note that here I compared the timestamp in <code>FxPrice</code> table with <code>a.c.sampled_at</code>, where <code>a</code> is the aforementioned alias to the table created using <code>generate_series</code>.
-(The <code>.c</code> in <code>a.c</code> is for <code>columns</code>, so <code>a.c.sampled_at</code> gets you the column named <code>sampled_at</code>.)</p>
-<p>Without the aliasing I wouldn&rsquo;t be able to achieve this effect; instead it would create a nested subquery and that&rsquo;s not what I want.</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>subquery_price <span style="color:#0550ae">=</span> <span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>    session<span style="color:#0550ae">.</span>query<span style="color:#1f2328">(</span>FxPrice<span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>filter<span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>        and_<span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#0550ae">.</span>ts <span style="color:#0550ae">&lt;=</span> a<span style="color:#0550ae">.</span>c<span style="color:#0550ae">.</span>sampled_at<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#0550ae">.</span>currency_from <span style="color:#0550ae">==</span> <span style="color:#0a3069">&#34;JPY&#34;</span><span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>            FxPrice<span style="color:#0550ae">.</span>currency_to <span style="color:#0550ae">==</span> <span style="color:#0a3069">&#34;USD&#34;</span><span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>        <span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>order_by<span style="color:#1f2328">(</span>desc<span style="color:#1f2328">(</span>FxPrice<span style="color:#0550ae">.</span>ts<span style="color:#1f2328">))</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>limit<span style="color:#1f2328">(</span><span style="color:#0550ae">1</span><span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>subquery<span style="color:#1f2328">()</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>lateral<span style="color:#1f2328">()</span>
-</span></span><span style="display:flex;"><span><span style="color:#1f2328">)</span>
-</span></span></code></pre></div><p>Finally, putting everything together:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>results <span style="color:#0550ae">=</span> <span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>    session<span style="color:#0550ae">.</span>query<span style="color:#1f2328">(</span>
-</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#0550ae">.</span>c<span style="color:#0550ae">.</span>ts<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>        a<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#0550ae">.</span>c<span style="color:#0550ae">.</span>currency_from<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#0550ae">.</span>c<span style="color:#0550ae">.</span>currency_to<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>        subquery_price<span style="color:#0550ae">.</span>c<span style="color:#0550ae">.</span>price<span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>select_from<span style="color:#1f2328">(</span>a<span style="color:#1f2328">)</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>join<span style="color:#1f2328">(</span>subquery_price<span style="color:#1f2328">,</span> true<span style="color:#1f2328">())</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0550ae">.</span>all<span style="color:#1f2328">()</span>
-</span></span><span style="display:flex;"><span><span style="color:#1f2328">)</span>
-</span></span></code></pre></div><p>Which actually produces the following query:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#cf222e">SELECT</span><span style="color:#fff"> </span>anon_1<span style="color:#1f2328">.</span>ts<span style="color:#1f2328">,</span><span style="color:#fff"> </span>anon_2<span style="color:#1f2328">.</span>sampled_at<span style="color:#1f2328">,</span><span style="color:#fff"> </span>anon_1<span style="color:#1f2328">.</span>currency_from<span style="color:#1f2328">,</span><span style="color:#fff"> </span>anon_1<span style="color:#1f2328">.</span>currency_to<span style="color:#1f2328">,</span><span style="color:#fff"> </span>anon_1<span style="color:#1f2328">.</span>price<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#cf222e">FROM</span><span style="color:#fff"> </span><span style="color:#1f2328">(</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">SELECT</span><span style="color:#fff"> </span>generate_series<span style="color:#1f2328">(:</span>generate_series_1<span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">:</span>generate_series_2<span style="color:#1f2328">,</span><span style="color:#fff"> </span><span style="color:#1f2328">:</span>generate_series_3<span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>sampled_at<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>anon_2<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#cf222e">JOIN</span><span style="color:#fff"> </span><span style="color:#cf222e">LATERAL</span><span style="color:#fff"> </span><span style="color:#1f2328">(</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">SELECT</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>created_at<span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>created_at<span style="color:#1f2328">,</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>ts<span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>ts<span style="color:#1f2328">,</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>currency_from<span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>currency_from<span style="color:#1f2328">,</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>currency_to<span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>currency_to<span style="color:#1f2328">,</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>price<span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>price<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">FROM</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">WHERE</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>ts<span style="color:#fff"> </span><span style="color:#0550ae">&lt;=</span><span style="color:#fff"> </span>anon_2<span style="color:#1f2328">.</span>sampled_at<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">AND</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>currency_from<span style="color:#fff"> </span><span style="color:#0550ae">=</span><span style="color:#fff"> </span><span style="color:#1f2328">:</span>currency_from_1<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">AND</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>currency_to<span style="color:#fff"> </span><span style="color:#0550ae">=</span><span style="color:#fff"> </span><span style="color:#1f2328">:</span>currency_to_1<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">ORDER</span><span style="color:#fff"> </span><span style="color:#cf222e">BY</span><span style="color:#fff"> </span>alphavantage<span style="color:#1f2328">.</span>fx<span style="color:#1f2328">.</span>ts<span style="color:#fff"> </span><span style="color:#cf222e">DESC</span><span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#cf222e">LIMIT</span><span style="color:#fff"> </span><span style="color:#1f2328">:</span>param_1<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff">    </span><span style="color:#1f2328">)</span><span style="color:#fff"> </span><span style="color:#cf222e">AS</span><span style="color:#fff"> </span>anon_1<span style="color:#fff">
-</span></span></span><span style="display:flex;"><span><span style="color:#fff"></span><span style="color:#cf222e">ON</span><span style="color:#fff"> </span><span style="color:#cf222e">true</span><span style="color:#fff">
-</span></span></span></code></pre></div><p>where the parameters are:</p>
-<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span> <span style="color:#1f2328">{</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;generate_series_1&#39;</span><span style="color:#1f2328">:</span> datetime<span style="color:#0550ae">.</span>datetime<span style="color:#1f2328">(</span><span style="color:#0550ae">2020</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">0</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">0</span><span style="color:#1f2328">),</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;generate_series_2&#39;</span><span style="color:#1f2328">:</span> datetime<span style="color:#0550ae">.</span>datetime<span style="color:#1f2328">(</span><span style="color:#0550ae">2020</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">2</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">1</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">0</span><span style="color:#1f2328">,</span> <span style="color:#0550ae">0</span><span style="color:#1f2328">),</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;generate_series_3&#39;</span><span style="color:#1f2328">:</span> datetime<span style="color:#0550ae">.</span>timedelta<span style="color:#1f2328">(</span>seconds<span style="color:#0550ae">=</span><span style="color:#0550ae">7200</span><span style="color:#1f2328">),</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;currency_from_1&#39;</span><span style="color:#1f2328">:</span> <span style="color:#0a3069">&#39;JPY&#39;</span><span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;currency_to_1&#39;</span><span style="color:#1f2328">:</span> <span style="color:#0a3069">&#39;USD&#39;</span><span style="color:#1f2328">,</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#0a3069">&#39;param_1&#39;</span><span style="color:#1f2328">:</span> <span style="color:#0550ae">1</span>
-</span></span><span style="display:flex;"><span> <span style="color:#1f2328">}</span>
-</span></span></code></pre></div>
+<p>For various reasons I have multiple Bitbucket accounts with different organisations, and Bitbucket does not let you use the same SSH key for different accounts under different organisations - probably for a good reason - even though I am using the same machine to access them anyway.</p>
+<p>This is just a reminder for myself on how to make use of the SSH config file to handle different profiles for different Bitbucket accounts, so hopefully next time I won&rsquo;t have to come up with this again. This should work for any git server other than Bitbucket.</p>
+<ol>
+<li>Generate SSH keys for each account, e.g.: <code>ssh-keygen -f ~/.ssh/bitbucket_org1_key</code>, <code>_org2_key</code>, etc</li>
+<li>Set up a specific host per Bitbucket account in <code>~/.ssh/config</code>, e.g.:</li>
+</ol>
+<pre tabindex="0"><code>Host bitbucket_org1
+    User git
+    Hostname bitbucket.org
+    IdentityFile /home/yun/.ssh/bitbucket_org1_key
+    IdentitiesOnly yes
+
+Host bitbucket_org2
+    User git
+    Hostname bitbucket.org
+    IdentityFile /home/yun/.ssh/bitbucket_org2_key
+    IdentitiesOnly yes
+</code></pre><pre><code>(Not related, but you might need this line in your host config too - `AddressFamily inet` - to make sure it uses IPV4 only - otherwise Bitbucket jut won't let you.)
+</code></pre>
+<ol start="3">
+<li>Now test the connection with e.g. <code>ssh -vv bitbucket_org1</code>. If something is wrong, go back and figure it out.</li>
+<li>Now when you clone a new repo, instead of using the original url, use <code>git clone git@bitbucket_org1:org_name/repo_name.git</code>, depending on which account should be use to access the repo.
+<ul>
+<li>If it&rsquo;s an existing repo, modify the remote url with <code>git remote set-url origin git@bitbucket_org1:org_name/repo_name.git</code>.</li>
+</ul>
+</li>
+<li>Now you should never have to worry about it again. Hopefully.</li>
+</ol>
+
 
 </article>
 </main>
