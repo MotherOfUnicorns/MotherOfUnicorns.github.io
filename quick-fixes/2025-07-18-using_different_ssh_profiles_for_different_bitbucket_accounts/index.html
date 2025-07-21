@@ -133,8 +133,7 @@
 <p>This is just a reminder for myself on how to make use of the SSH config file to handle different profiles for different Bitbucket accounts, so hopefully next time I won&rsquo;t have to come up with this again. This should work for any git server other than Bitbucket.</p>
 <ol>
 <li>Generate SSH keys for each account, e.g.: <code>ssh-keygen -f ~/.ssh/bitbucket_org1_key</code>, <code>_org2_key</code>, etc</li>
-<li>Set up a specific host per Bitbucket account in <code>~/.ssh/config</code>, e.g.:</li>
-</ol>
+<li>Set up a specific host per Bitbucket account in <code>~/.ssh/config</code>, e.g.:
 <pre tabindex="0"><code>Host bitbucket_org1
     User git
     Hostname bitbucket.org
@@ -146,9 +145,10 @@ Host bitbucket_org2
     Hostname bitbucket.org
     IdentityFile /home/yun/.ssh/bitbucket_org2_key
     IdentitiesOnly yes
-</code></pre><pre><code>* (Not related, but you might need this line in your host config too - `AddressFamily inet` - to make sure it uses IPV4 only - otherwise Bitbucket jut won't let you.)
-</code></pre>
-<ol start="3">
+</code></pre><ul>
+<li>(Not related, but you might need this line in your host config too - <code>AddressFamily inet</code> - to make sure it uses IPV4 only - otherwise Bitbucket jut won&rsquo;t let you.)</li>
+</ul>
+</li>
 <li>Now test the connection with e.g. <code>ssh -vv bitbucket_org1</code>. If something is wrong, go back and figure it out.</li>
 <li>Now when you clone a new repo, instead of using the original url, use <code>git clone git@bitbucket_org1:org_name/repo_name.git</code>, depending on which account should be use to access the repo.
 <ul>
